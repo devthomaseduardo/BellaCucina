@@ -1,6 +1,6 @@
 # Bella Cucina
 
-![Logo Bella Cucina](./public/logo.svg)
+<img width="1366" height="768" alt="Cardápio Digital Moderno: Tecnologia Sob Medida para Bares e Restaurantes" src="https://github.com/user-attachments/assets/e4367b33-1f1c-4543-893d-505edbc9b777" />
 
 Site do restaurante Bella Cucina: cardápio digital, reservas, pedidos por QR e painel do garçom. Interface em português, inglês e italiano.
 
