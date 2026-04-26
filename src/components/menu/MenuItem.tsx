@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import * as React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Star } from "lucide-react";
@@ -22,11 +22,17 @@ const MenuItem = ({
   price = 0, // Default value to prevent undefined price
   image,
   category,
-  rating = Math.random() * (5 - 4) + 4, // Random rating between 4 and 5 if not provided
-}: MenuItemProps) => {
+  rating: initialRating,
+  className,
+}: MenuItemProps & { className?: string }) => {
   const { t } = useI18n();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isHovered, setIsHovered] = React.useState(false);
+
+  const rating = React.useMemo(() => initialRating ?? Math.random() * (5 - 4) + 4, [
+    initialRating,
+  ]);
+
   const categoryLabel = t(`menu.category.${category}`);
 
   return (
@@ -34,7 +40,7 @@ const MenuItem = ({
       <Card
         role="button"
         tabIndex={0}
-        className="group flex h-[min(32rem,82vh)] w-full max-w-full cursor-pointer flex-col overflow-hidden bg-card text-card-foreground shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 sm:h-[min(28rem,78vh)] sm:max-w-[360px]"
+        className={`group flex w-full max-w-full cursor-pointer flex-col overflow-hidden bg-card text-card-foreground shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 sm:max-w-[360px] ${className || ""}`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={() => setIsModalOpen(true)}

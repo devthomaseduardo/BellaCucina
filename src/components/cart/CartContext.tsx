@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import * as React from "react";
+import { createContext, useContext } from "react";
 
 export interface CartItem {
   id: string;
@@ -66,15 +67,15 @@ const generateOrderId = () => {
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [tableNumber, setTableNumber] = useState<string | null>(null);
-  const [customerName, setCustomerName] = useState<string | null>(null);
-  const [showSuccessToast, setShowSuccessToast] = useState<boolean>(false);
-  const [successMessage, setSuccessMessage] = useState<string>("");
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [items, setItems] = React.useState<CartItem[]>([]);
+  const [tableNumber, setTableNumber] = React.useState<string | null>(null);
+  const [customerName, setCustomerName] = React.useState<string | null>(null);
+  const [showSuccessToast, setShowSuccessToast] = React.useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = React.useState<string>("");
+  const [orders, setOrders] = React.useState<Order[]>([]);
 
   // Load cart and orders from localStorage on initial render
-  useEffect(() => {
+  React.useEffect(() => {
     const savedCart = localStorage.getItem("cart");
     const savedTable = localStorage.getItem("tableNumber");
     const savedName = localStorage.getItem("customerName");
@@ -113,24 +114,24 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   // Save cart to localStorage whenever it changes
-  useEffect(() => {
+  React.useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(items));
   }, [items]);
 
   // Save orders to localStorage whenever they change
-  useEffect(() => {
+  React.useEffect(() => {
     localStorage.setItem("orders", JSON.stringify(orders));
   }, [orders]);
 
   // Save table number to localStorage whenever it changes
-  useEffect(() => {
+  React.useEffect(() => {
     if (tableNumber) {
       localStorage.setItem("tableNumber", tableNumber);
     }
   }, [tableNumber]);
 
   // Save customer name to localStorage whenever it changes
-  useEffect(() => {
+  React.useEffect(() => {
     if (customerName) {
       localStorage.setItem("customerName", customerName);
     }
@@ -235,14 +236,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
-  const totalItems = items.reduce((total, item) => total + item.quantity, 0);
+  const totalItems = React.useMemo(() => 
+    items.reduce((total, item) => total + item.quantity, 0),
+  [items]);
 
-  const totalPrice = items.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0,
-  );
+  const totalPrice = React.useMemo(() => 
+    items.reduce((total, item) => total + item.price * item.quantity, 0),
+  [items]);
 
-  const value = {
+  const value = React.useMemo(() => ({
     items,
     addItem,
     removeItem,
@@ -263,7 +265,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     addOrder,
     importOrder,
     updateOrderStatus,
-  };
+  }), [
+    items, totalItems, totalPrice, tableNumber, customerName, 
+    showSuccessToast, successMessage, orders
+  ]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

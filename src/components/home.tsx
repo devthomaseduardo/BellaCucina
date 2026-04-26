@@ -146,7 +146,7 @@ const HomePageContent = () => {
             </div>
 
             <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="rounded-3xl border border-border/60 bg-card/70 backdrop-blur-md p-7 shadow-sm hover:shadow-md transition-shadow">
+              <div className="h-full rounded-3xl border border-border/60 bg-card/70 backdrop-blur-md p-7 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="font-display text-2xl text-foreground mb-2">
                   {t("about.card1Title")}
                 </h3>
@@ -155,7 +155,7 @@ const HomePageContent = () => {
                 </p>
               </div>
 
-              <div className="rounded-3xl border border-border/60 bg-card/70 backdrop-blur-md p-7 shadow-sm hover:shadow-md transition-shadow">
+              <div className="h-full rounded-3xl border border-border/60 bg-card/70 backdrop-blur-md p-7 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="font-display text-2xl text-foreground mb-2">
                   {t("about.card2Title")}
                 </h3>
@@ -164,7 +164,7 @@ const HomePageContent = () => {
                 </p>
               </div>
 
-              <div className="rounded-3xl border border-border/60 bg-card/70 backdrop-blur-md p-7 shadow-sm hover:shadow-md transition-shadow">
+              <div className="h-full rounded-3xl border border-border/60 bg-card/70 backdrop-blur-md p-7 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="font-display text-2xl text-foreground mb-2">
                   {t("about.card3Title")}
                 </h3>

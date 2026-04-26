@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import * as React from "react";
 import { Search, Filter, PlusCircle } from "lucide-react";
 import {
   Carousel,
@@ -37,15 +37,14 @@ const MenuSection = ({
   const resolvedTitle = title ?? t("menu.sectionTitle");
   const resolvedDescription = description ?? t("menu.sectionDescription");
 
-  const [filteredItems, setFilteredItems] = useState<MenuItemType[]>(items);
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState("grid");
-  const [selectedItem, setSelectedItem] = useState<MenuItemType | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = React.useState("all");
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [viewMode, setViewMode] = React.useState("grid");
+  const [selectedItem, setSelectedItem] = React.useState<MenuItemType | null>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
-  // Filter items based on category and search query
-  useEffect(() => {
+  // Filter items based on category and search query using useMemo for performance
+  const filteredItems = React.useMemo(() => {
     let result = items;
 
     // Apply category filter
@@ -65,7 +64,7 @@ const MenuSection = ({
       );
     }
 
-    setFilteredItems(result);
+    return result;
   }, [activeCategory, searchQuery, items]);
 
   // Get featured items for carousel
@@ -99,7 +98,7 @@ const MenuSection = ({
             <div className="flex w-full max-w-full flex-col gap-3 rounded-lg border border-border/60 bg-card p-4 text-card-foreground shadow-sm sm:flex-row sm:items-center sm:gap-4 md:mt-0 md:w-auto md:max-w-md md:shrink-0">
               <div className="rounded-md border-2 border-primary bg-background p-2">
                 <img
-                  src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://bellacucina.com/menu"
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://bella-cucina-demo.vercel.app/"
                   alt={t("menu.qrTitle")}
                   className="h-20 w-20"
                 />
@@ -204,6 +203,7 @@ const MenuSection = ({
                     price={item.price}
                     image={item.image}
                     category={item.category}
+                    className="h-full"
                   />
                 ))}
               </div>

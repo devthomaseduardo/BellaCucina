@@ -31,7 +31,7 @@ const LanguageSelectPage = () => {
           src={HERO_BG}
           alt=""
           className="h-full w-full scale-105 object-cover object-center"
-          fetchPriority="high"
+          fetchpriority="high"
         />
         {/* Leitura: vinheta + gradiente borgonha suave */}
         <div

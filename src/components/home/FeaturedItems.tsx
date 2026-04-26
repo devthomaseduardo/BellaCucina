@@ -81,7 +81,7 @@ const FeaturedItems = ({
                         {t(`menu.category.${item.category}`)}
                       </div>
                     </div>
-                    <CardContent className="p-4">
+                    <CardContent className="flex flex-1 flex-col p-4">
                       <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-2">
                         <h3 className="min-w-0 text-lg font-semibold leading-snug text-foreground transition-colors group-hover:text-primary sm:text-xl">
                           {item.name}
@@ -90,10 +90,10 @@ const FeaturedItems = ({
                           R$ {item.price.toFixed(2)}
                         </span>
                       </div>
-                      <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
+                      <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
                         {item.description}
                       </p>
-                      <div className="flex items-center justify-between">
+                      <div className="mt-auto flex items-center justify-between">
                         <div className="flex items-center text-muted-foreground">
                           <Star className="mr-1 h-4 w-4 fill-amber-400/90 text-amber-500" />
                           <span className="text-sm font-medium text-foreground/90">
