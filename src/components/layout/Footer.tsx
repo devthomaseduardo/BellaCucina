@@ -15,37 +15,37 @@ const Footer = ({
   email = "info@restaurant.com",
 }: FooterProps) => {
   return (
-    <footer className="w-full bg-slate-900 text-white py-12 md:py-16 px-4 md:px-8">
+    <footer className="w-full bg-slate-900 px-4 py-12 text-white md:px-8 md:py-16">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Restaurant Info */}
           <div>
-            <h3 className="text-xl font-bold mb-4">{restaurantName}</h3>
-            <p className="text-gray-300 mb-2">{address}</p>
-            <p className="text-gray-300 mb-2">{phone}</p>
-            <p className="text-gray-300">{email}</p>
+            <h3 className="mb-4 text-xl font-semibold text-zinc-50">{restaurantName}</h3>
+            <p className="mb-2 text-zinc-400">{address}</p>
+            <p className="mb-2 text-zinc-400">{phone}</p>
+            <p className="text-zinc-400">{email}</p>
           </div>
 
           {/* Hours */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Hours</h3>
-            <p className="text-gray-300 mb-2">
+            <h3 className="mb-4 text-xl font-semibold text-zinc-50">Hours</h3>
+            <p className="mb-2 text-zinc-400">
               Monday - Thursday: 11:00 AM - 10:00 PM
             </p>
-            <p className="text-gray-300 mb-2">
+            <p className="mb-2 text-zinc-400">
               Friday - Saturday: 11:00 AM - 11:00 PM
             </p>
-            <p className="text-gray-300">Sunday: 12:00 PM - 9:00 PM</p>
+            <p className="text-zinc-400">Sunday: 12:00 PM - 9:00 PM</p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Quick Links</h3>
+            <h3 className="mb-4 text-xl font-semibold text-zinc-50">Quick Links</h3>
             <ul className="space-y-2">
               <li>
                 <a
                   href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
                 >
                   Home
                 </a>
@@ -53,7 +53,7 @@ const Footer = ({
               <li>
                 <a
                   href="#menu"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
                 >
                   Menu
                 </a>
@@ -61,7 +61,7 @@ const Footer = ({
               <li>
                 <a
                   href="#reservations"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
                 >
                   Reservations
                 </a>
@@ -69,7 +69,7 @@ const Footer = ({
               <li>
                 <a
                   href="#about"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
                 >
                   About Us
                 </a>
@@ -77,7 +77,7 @@ const Footer = ({
               <li>
                 <a
                   href="#contact"
-                  className="text-gray-300 hover:text-white transition-colors"
+                  className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
                 >
                   Contact
                 </a>
@@ -87,23 +87,23 @@ const Footer = ({
 
           {/* Social Media */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Follow Us</h3>
+            <h3 className="mb-4 text-xl font-semibold text-zinc-50">Follow Us</h3>
             <div className="flex space-x-4">
               <a
                 href="#"
-                className="text-gray-300 hover:text-white transition-colors"
+                className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
               >
                 <Facebook size={24} />
               </a>
               <a
                 href="#"
-                className="text-gray-300 hover:text-white transition-colors"
+                className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
               >
                 <Instagram size={24} />
               </a>
               <a
                 href="#"
-                className="text-gray-300 hover:text-white transition-colors"
+                className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
               >
                 <Twitter size={24} />
               </a>
@@ -116,9 +116,12 @@ const Footer = ({
                 <input
                   type="email"
                   placeholder="Your email"
-                  className="px-3 py-2 bg-gray-800 text-white rounded-l-md focus:outline-none flex-1"
+                  className="flex-1 rounded-l-md border border-zinc-700 bg-zinc-800/80 px-3 py-2 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-300/30"
                 />
-                <button className="bg-primary text-white px-4 py-2 rounded-r-md hover:bg-primary/90 transition-colors">
+                <button
+                  type="button"
+                  className="rounded-r-md bg-primary px-4 py-2 text-primary-foreground transition-colors hover:bg-primary/90"
+                >
                   Subscribe
                 </button>
               </div>
@@ -126,7 +129,7 @@ const Footer = ({
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+        <div className="mt-12 border-t border-zinc-800 pt-8 text-center text-zinc-500">
           <p>
             &copy; {new Date().getFullYear()} {restaurantName}. All rights
             reserved.

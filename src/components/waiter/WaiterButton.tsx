@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { FaClipboardList } from "react-icons/fa"; // Agora a importação deve funcionar corretamente
 import { Button } from "@/components/ui/button";
 import WaiterPanel from "./WaiterPanel";
+import { ServiceBellIcon } from "@/components/icons/fine-dining";
 
 interface WaiterButtonProps {
   variant?:
@@ -29,8 +29,9 @@ const WaiterButton: React.FC<WaiterButtonProps> = ({
         size={size}
         onClick={() => setIsPanelOpen(true)}
         className={className}
+        aria-label="Abrir painel do garçom"
       >
-        <FaClipboardList className="h-10 w-10 mr-2" /> {/* Novo ícone */}
+        <ServiceBellIcon className="h-5 w-5" />
       </Button>
 
       <WaiterPanel open={isPanelOpen} onOpenChange={setIsPanelOpen} />

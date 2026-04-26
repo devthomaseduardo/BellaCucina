@@ -11,8 +11,7 @@ const CartSystemDemo = () => {
     description:
       "Pizza clássica italiana com molho de tomate caseiro, queijo mussarela de búfala importada, manjericão fresco orgânico, sal marinho e azeite extra-virgem premium.",
     price: 39.9,
-    image:
-      "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=600&q=75",
+    image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=75",
     category: "Pizza",
   };
    

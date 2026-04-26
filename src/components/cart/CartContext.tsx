@@ -43,7 +43,8 @@ interface CartContextType {
   successMessage: string;
   setSuccessMessage: (message: string) => void;
   orders: Order[];
-  addOrder: (order: Omit<Order, "id" | "createdAt" | "updatedAt">) => void;
+  addOrder: (order: Omit<Order, "id" | "createdAt" | "updatedAt">) => string;
+  importOrder: (order: Order) => void;
   updateOrderStatus: (orderId: string, status: Order["status"]) => void;
 }
 
@@ -217,6 +218,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     return newOrder.id;
   };
 
+  const importOrder = (order: Order) => {
+    setOrders((prevOrders) => {
+      if (prevOrders.some((o) => o.id === order.id)) return prevOrders;
+      return [...prevOrders, order];
+    });
+  };
+
   const updateOrderStatus = (orderId: string, status: Order["status"]) => {
     setOrders((prevOrders) =>
       prevOrders.map((order) =>
@@ -253,6 +261,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     setSuccessMessage,
     orders,
     addOrder,
+    importOrder,
     updateOrderStatus,
   };
 

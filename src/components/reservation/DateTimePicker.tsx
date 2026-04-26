@@ -1,22 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { format, addDays, isSameDay } from "date-fns";
+import React, { useEffect, useMemo, useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
-interface TimeSlot {
+export interface TimeSlot {
   id: string;
   time: string;
   available: boolean;
 }
 
 interface DateTimePickerProps {
-  onDateTimeSelect?: (
-    date: Date | undefined,
-    timeSlot: TimeSlot | null,
-  ) => void;
-  selectedDate?: Date | undefined;
+  onDateTimeSelect?: (date: Date | undefined, timeSlot: TimeSlot | null) => void;
+  selectedDate?: Date;
   selectedTimeSlot?: TimeSlot | null;
 }
 
@@ -25,10 +21,9 @@ const DateTimePicker = ({
   selectedDate,
   selectedTimeSlot,
 }: DateTimePickerProps) => {
-  const [date, setDate] = useState<Date | undefined>(selectedDate);
-  const [timeSlot, setTimeSlot] = useState<TimeSlot | null>(
-    selectedTimeSlot || null,
-  );
+  // Controlled state (single source of truth lives in parent)
+  const date = selectedDate;
+  const timeSlot = selectedTimeSlot ?? null;
   const [availableTimeSlots, setAvailableTimeSlots] = useState<TimeSlot[]>([]);
 
   // Generate time slots for the selected date
@@ -57,16 +52,18 @@ const DateTimePicker = ({
   }, [date]);
 
   const handleDateSelect = (newDate: Date | undefined) => {
-    setDate(newDate);
-    setTimeSlot(null);
     onDateTimeSelect(newDate, null);
   };
 
   const handleTimeSelect = (slot: TimeSlot) => {
     if (!slot.available) return;
-    setTimeSlot(slot);
     onDateTimeSelect(date, slot);
   };
+
+  const selectedTimeIsValid = useMemo(() => {
+    if (!timeSlot) return false;
+    return availableTimeSlots.some((s) => s.id === timeSlot.id && s.available);
+  }, [availableTimeSlots, timeSlot]);
 
   return (
     <div className="w-full">
@@ -91,12 +88,12 @@ const DateTimePicker = ({
             <Label className="font-medium mb-2 block">
               Selecione um horário:
             </Label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {availableTimeSlots.map((slot) => (
                 <Button
                   key={slot.id}
                   variant={timeSlot?.id === slot.id ? "default" : "outline"}
-                  className={`${!slot.available ? "opacity-50 cursor-not-allowed" : ""}`}
+                  className={`min-h-10 px-2 text-xs sm:text-sm ${!slot.available ? "cursor-not-allowed opacity-50" : ""}`}
                   disabled={!slot.available}
                   onClick={() => handleTimeSelect(slot)}
                 >
@@ -114,7 +111,7 @@ const DateTimePicker = ({
                 Por favor, selecione um horário disponível
               </p>
             )}
-            {date && timeSlot && (
+            {date && timeSlot && selectedTimeIsValid && (
               <div className="mt-6 p-4 bg-muted rounded-md">
                 <Label className="font-medium">Sua Seleção:</Label>
                 <p className="text-sm mt-1">

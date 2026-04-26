@@ -1,18 +1,17 @@
 import { Suspense } from "react";
-import { useRoutes, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./components/home";
-import routes from "tempo-routes";
+import WaiterPage from "@/components/waiter/WaiterPage";
+import LanguageSelectPage from "@/components/landing/LanguageSelectPage";
 
 function App() {
   return (
-    <Suspense fallback={<p>Loading...</p>}>
+    <Suspense fallback={<p className="p-6 text-center text-muted-foreground">Carregando…</p>}>
       <div className="min-h-screen bg-background">
-        {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
         <Routes>
-          <Route path="/" element={<Home />} />
-          {import.meta.env.VITE_TEMPO === "true" && (
-            <Route path="/tempobook/*" element={<div />} />
-          )}
+          <Route path="/" element={<LanguageSelectPage />} />
+          <Route path="/menu" element={<Home />} />
+          <Route path="/garcom" element={<WaiterPage />} />
         </Routes>
       </div>
     </Suspense>

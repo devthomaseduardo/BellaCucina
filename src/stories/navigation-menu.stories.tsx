@@ -194,8 +194,8 @@ export const Base = {
                         Tabs
                       </div>
                       <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                        A set of layered sections of content—known as tab
-                        panels—that are displayed one at a time.
+                        A set of layered sections of content, known as tab
+                        panels, that are displayed one at a time.
                       </p>
                     </a>
                   </NavigationMenuLink>

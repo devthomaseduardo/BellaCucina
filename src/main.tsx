@@ -3,16 +3,16 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
-
-import { TempoDevtools } from "tempo-devtools";
-TempoDevtools.init();
+import { I18nProvider } from "@/i18n/I18nProvider";
 
 const basename = import.meta.env.BASE_URL;
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter basename={basename}>
-      <App />
+      <I18nProvider>
+        <App />
+      </I18nProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );

@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/i18n/I18nProvider";
+import { FEATURED_HIGHLIGHT_ITEMS } from "@/data/italian-menu";
 
 interface FeaturedItem {
   id: string;
@@ -16,7 +18,7 @@ interface FeaturedItem {
   description: string;
   image: string;
   price: number;
-  rating: number;
+  rating?: number;
   category: string;
 }
 
@@ -26,84 +28,40 @@ interface FeaturedItemsProps {
   subtitle?: string;
 }
 
+const DEFAULT_FEATURED: FeaturedItem[] = FEATURED_HIGHLIGHT_ITEMS.map(
+  (item, i) => ({
+    ...item,
+    rating: Number((4.55 + (i % 6) * 0.07).toFixed(2)),
+  }),
+);
+
 const FeaturedItems = ({
-  items = [
-    {
-      id: "1",
-      name: "Pizza Especial",
-      description:
-        "Nossa famosa pizza assada em forno a lenha com mussarela fresca, manjericão e tomates San Marzano",
-      image:
-        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80",
-      price: 59.9,
-      rating: 4.9,
-      category: "Pizza",
-    },
-    {
-      id: "2",
-      name: "Massa com Trufas",
-      description:
-        "Fettuccine artesanal com molho cremoso de trufas negras e parmesão envelhecido",
-      image:
-        "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=600&q=80",
-      price: 72.9,
-      rating: 4.8,
-      category: "Massa",
-    },
-    {
-      id: "3",
-      name: "Hambúrguer Wagyu",
-      description:
-        "Hambúrguer premium de carne Wagyu com cebolas caramelizadas, queijo cheddar envelhecido e molho da casa",
-      image:
-        "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80",
-      price: 64.9,
-      rating: 4.7,
-      category: "Prato Principal",
-    },
-    {
-      id: "4",
-      name: "Paella de Frutos do Mar",
-      description:
-        "Tradicional prato espanhol de arroz com frutos do mar frescos, açafrão e legumes da estação",
-      image:
-        "https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=600&q=80",
-      price: 89.9,
-      rating: 4.8,
-      category: "Especiais",
-    },
-    {
-      id: "5",
-      name: "Bolo de Chocolate Vulcão",
-      description:
-        "Bolo de chocolate quente com centro derretido, servido com sorvete de baunilha",
-      image:
-        "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600&q=80",
-      price: 32.9,
-      rating: 4.9,
-      category: "Sobremesa",
-    },
-  ],
-  title = "Pratos em Destaque",
-  subtitle = "Seleção especial do chef com os pratos que nossos clientes adoram",
+  items = DEFAULT_FEATURED,
+  title,
+  subtitle,
 }: FeaturedItemsProps) => {
+  const { t } = useI18n();
+  const resolvedTitle = title ?? t("featured.title");
+  const resolvedSubtitle = subtitle ?? t("featured.subtitle");
   return (
-    <section className="w-full py-12 md:py-16 bg-white">
+    <section className="w-full bg-background py-12 md:py-16">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-2">
-            {title}
+        <div className="mb-10 text-center">
+          <h2 className="mb-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            {resolvedTitle}
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">{subtitle}</p>
+          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+            {resolvedSubtitle}
+          </p>
         </div>
 
-        <div className="relative px-12">
+        <div className="relative px-0 sm:px-6 md:px-10 lg:px-12">
           <Carousel
             opts={{
               align: "start",
               loop: true,
             }}
-            className="w-full"
+            className="w-full max-w-full min-w-0"
           >
             <CarouselContent>
               {items.map((item) => (
@@ -111,36 +69,38 @@ const FeaturedItems = ({
                   key={item.id}
                   className="md:basis-1/2 lg:basis-1/3"
                 >
-                  <Card className="border overflow-hidden h-full">
-                    <div className="relative h-48 overflow-hidden">
+                  <Card className="group flex h-full flex-col overflow-hidden border transition-shadow hover:shadow-md">
+                    <div className="relative aspect-[4/3] min-h-[12.5rem] w-full shrink-0 overflow-hidden sm:aspect-[5/4] sm:min-h-[14rem] md:min-h-[15.5rem]">
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                        className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-[1.04]"
                       />
                       <div className="absolute top-2 right-2 bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-full">
-                        {item.category}
+                        {t(`menu.category.${item.category}`)}
                       </div>
                     </div>
                     <CardContent className="p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-bold text-xl">{item.name}</h3>
-                        <span className="font-bold text-lg">
+                      <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-2">
+                        <h3 className="min-w-0 text-lg font-semibold leading-snug text-foreground transition-colors group-hover:text-primary sm:text-xl">
+                          {item.name}
+                        </h3>
+                        <span className="shrink-0 text-base font-bold text-primary sm:text-lg">
                           R$ {item.price.toFixed(2)}
                         </span>
                       </div>
-                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                      <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
                         {item.description}
                       </p>
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-                          <span className="text-sm font-medium">
-                            {item.rating}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-muted-foreground">
+                          <Star className="mr-1 h-4 w-4 fill-amber-400/90 text-amber-500" />
+                          <span className="text-sm font-medium text-foreground/90">
+                            {(item.rating ?? 4.8).toFixed(1)}
                           </span>
                         </div>
                         <Button size="sm" className="text-sm">
-                          Pedir Agora
+                          {t("featured.orderNow")}
                         </Button>
                       </div>
                     </CardContent>
@@ -148,14 +108,22 @@ const FeaturedItems = ({
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="-left-4 bg-white" />
-            <CarouselNext className="-right-4 bg-white" />
+            <CarouselPrevious className="left-1 top-1/2 h-9 w-9 -translate-y-1/2 border border-border/60 bg-card/95 text-foreground shadow-sm sm:-left-2 md:-left-4" />
+            <CarouselNext className="right-1 top-1/2 h-9 w-9 -translate-y-1/2 border border-border/60 bg-card/95 text-foreground shadow-sm sm:-right-2 md:-right-4" />
           </Carousel>
         </div>
 
         <div className="mt-8 text-center">
-          <Button variant="outline" size="lg" className="mt-4">
-            Ver Cardápio Completo
+          <Button
+            variant="outline"
+            size="lg"
+            className="mt-4"
+            type="button"
+            onClick={() =>
+              document.getElementById("menu")?.scrollIntoView({ behavior: "smooth" })
+            }
+          >
+            {t("featured.ctaFull")}
           </Button>
         </div>
       </div>

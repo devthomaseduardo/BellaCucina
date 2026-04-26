@@ -23,6 +23,7 @@
   import { ScrollArea } from "@/components/ui/scroll-area";
 
   import { useCart, Order } from "../cart/CartContext";
+  import QrScannerDialog from "./QrScannerDialog";
 
   interface WaiterPanelProps {
     open: boolean;
@@ -30,10 +31,17 @@
   }
 
   const WaiterPanel: React.FC<WaiterPanelProps> = ({ open, onOpenChange }) => {
-    const { orders, updateOrderStatus } = useCart();
+    const {
+      orders,
+      importOrder,
+      updateOrderStatus,
+      setShowSuccessToast,
+      setSuccessMessage,
+    } = useCart();
     const [activeTab, setActiveTab] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [editingOrder, setEditingOrder] = useState<Order | null>(null);
+    const [scannerOpen, setScannerOpen] = useState(false);
 
     // Add some mock orders if there are none in the system
     useEffect(() => {
@@ -200,7 +208,55 @@
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1"
             />
+            <Button
+              variant="outline"
+              onClick={() => setScannerOpen(true)}
+              className="whitespace-nowrap"
+            >
+              Escanear QR
+            </Button>
           </div>
+
+          <QrScannerDialog
+            open={scannerOpen}
+            onOpenChange={setScannerOpen}
+            onApproveOrder={(payload) => {
+              if (payload.v === 2) {
+                importOrder({
+                  id: payload.order.id,
+                  tableNumber: payload.order.tableNumber,
+                  customerName: payload.order.customerName,
+                  items: payload.order.items,
+                  status: "preparing",
+                  totalPrice: payload.order.totalPrice,
+                  createdAt: new Date(payload.order.createdAt),
+                  updatedAt: new Date(),
+                });
+                setSuccessMessage(`Pedido #${payload.order.id} registrado!`);
+                setShowSuccessToast(true);
+                setTimeout(() => setShowSuccessToast(false), 2500);
+                return;
+              }
+
+              // fallback antigo (v1)
+              const exists = orders.some((o) => o.id === payload.orderId);
+              if (!exists) {
+                setSuccessMessage("Pedido não encontrado no sistema.");
+                setShowSuccessToast(true);
+                setTimeout(() => setShowSuccessToast(false), 2500);
+                return;
+              }
+              updateOrderStatus(payload.orderId, "preparing");
+              setSuccessMessage(`Pedido #${payload.orderId} aprovado!`);
+              setShowSuccessToast(true);
+              setTimeout(() => setShowSuccessToast(false), 2500);
+            }}
+            onError={(message) => {
+              setSuccessMessage(message);
+              setShowSuccessToast(true);
+              setTimeout(() => setShowSuccessToast(false), 2500);
+            }}
+          />
 
           <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid grid-cols-5 mb-4">
