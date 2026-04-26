@@ -40,7 +40,7 @@ const MenuItem = ({
       <Card
         role="button"
         tabIndex={0}
-        className={`group flex w-full max-w-full cursor-pointer flex-col overflow-hidden bg-card text-card-foreground shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 sm:max-w-[360px] ${className || ""}`}
+        className={`group flex w-full cursor-pointer flex-col overflow-hidden bg-card text-card-foreground shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 ${className || ""}`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={() => setIsModalOpen(true)}
@@ -51,11 +51,11 @@ const MenuItem = ({
           }
         }}
       >
-        <div className="relative min-h-[13.5rem] flex-[1.15] overflow-hidden sm:min-h-[15rem] md:min-h-[16rem]">
+        <div className="relative aspect-[4/3] w-full overflow-hidden">
           <img
             src={image}
             alt={name}
-            className={`h-full min-h-[inherit] w-full object-cover object-center transition-transform duration-500 ${isHovered ? "scale-[1.06]" : "scale-100"}`}
+            className={`h-full w-full object-cover object-center transition-transform duration-500 ${isHovered ? "scale-[1.06]" : "scale-100"}`}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/5" />
           <div className="absolute top-2 right-2 bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
@@ -82,7 +82,8 @@ const MenuItem = ({
             {description}
           </p>
           <Button
-            className="mt-auto w-full gap-2"
+            size="sm"
+            className="mt-auto self-end gap-2 px-6 rounded-full"
             onClick={(e) => {
               e.stopPropagation();
               setIsModalOpen(true);

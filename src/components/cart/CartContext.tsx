@@ -9,6 +9,7 @@ export interface CartItem {
   image: string;
   category: string;
   notes?: string;
+  customerName?: string;
 }
 
 export interface Order {
@@ -28,6 +29,7 @@ interface CartContextType {
     item: Omit<CartItem, "quantity">,
     quantity?: number,
     notes?: string,
+    customerName?: string,
   ) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
@@ -141,9 +143,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     item: Omit<CartItem, "quantity">,
     quantity = 1,
     notes = "",
+    itemCustomerName = "",
   ) => {
     setItems((prevItems) => {
-      const existingItemIndex = prevItems.findIndex((i) => i.id === item.id);
+      // Only merge if ID AND customerName are the same
+      const existingItemIndex = prevItems.findIndex(
+        (i) => i.id === item.id && (i.customerName || "") === (itemCustomerName || ""),
+      );
 
       if (existingItemIndex >= 0) {
         // Item already exists, update quantity
@@ -162,7 +168,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         setSuccessMessage(`${item.name} adicionado ao carrinho!`);
         setShowSuccessToast(true);
         setTimeout(() => setShowSuccessToast(false), 3000);
-        return [...prevItems, { ...item, quantity, notes }];
+        return [
+          ...prevItems,
+          {
+            ...item,
+            quantity,
+            notes,
+            customerName: itemCustomerName || customerName || undefined,
+          },
+        ];
       }
     });
   };

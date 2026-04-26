@@ -100,7 +100,7 @@ const FeaturedItems = ({
                             {(item.rating ?? 4.8).toFixed(1)}
                           </span>
                         </div>
-                        <Button size="sm" className="text-sm">
+                        <Button size="sm" className="text-xs px-4 rounded-full h-8">
                           {t("featured.orderNow")}
                         </Button>
                       </div>

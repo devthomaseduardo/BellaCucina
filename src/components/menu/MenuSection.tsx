@@ -85,7 +85,7 @@ const MenuSection = ({
 
   return (
     <div className="w-full min-w-0 bg-muted/25 py-12">
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8 flex flex-col items-stretch justify-between gap-6 md:flex-row md:items-center">
           <div className="min-w-0 max-w-2xl">
             <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
@@ -193,7 +193,7 @@ const MenuSection = ({
         >
           <TabsContent value="grid">
             {filteredItems.length > 0 ? (
-              <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 sm:justify-items-stretch lg:grid-cols-3 xl:grid-cols-4">
+              <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredItems.map((item) => (
                   <MenuItem
                     key={item.id}

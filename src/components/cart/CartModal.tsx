@@ -245,7 +245,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                         id="tableNumber"
                         value={localTableNumber}
                         onChange={(e) => setLocalTableNumber(e.target.value)}
-                        placeholder="Informe o número da mesa"
+                        placeholder="Nº da mesa"
                         className="mt-1"
                       />
                     </div>
@@ -254,14 +254,14 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                         htmlFor="customerName"
                         className="text-sm font-medium"
                       >
-                        Seu Nome <span className="text-red-500">*</span>
+                        Identificação <span className="text-red-500">*</span>
                       </Label>
                       <div className="relative mt-1">
                         <Input
                           id="customerName"
                           value={localCustomerName}
                           onChange={(e) => setLocalCustomerName(e.target.value)}
-                          placeholder="Informe seu nome"
+                          placeholder="Ex: Nome do grupo ou líder"
                           className="pl-9"
                         />
                         <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -291,9 +291,16 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                                 <Trash2 className="h-4 w-4 text-destructive" />
                               </Button>
                             </div>
-                            <p className="text-sm text-muted-foreground mb-1">
-                              R$ {item.price.toFixed(2)}
-                            </p>
+                            <div className="flex items-center gap-2 mb-1">
+                              <p className="text-sm text-muted-foreground">
+                                R$ {item.price.toFixed(2)}
+                              </p>
+                              {item.customerName && (
+                                <span className="text-[10px] bg-primary/5 text-primary px-1.5 py-0.5 rounded-md border border-primary/10 font-medium">
+                                  Para: {item.customerName}
+                                </span>
+                              )}
+                            </div>
 
                             {editingItemId === item.id ? (
                               <div className="mt-2">

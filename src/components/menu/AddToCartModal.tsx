@@ -7,6 +7,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Minus, Plus, Check, Star } from "lucide-react";
 import { useCart } from "../cart/CartContext";
@@ -33,8 +34,9 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
 }) => {
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState("");
+  const [itemCustomerName, setItemCustomerName] = useState("");
   const [addedToCart, setAddedToCart] = useState(false);
-  const { addItem } = useCart();
+  const { addItem, customerName } = useCart();
   const { t } = useI18n();
   const categoryLabel = t(`menu.category.${item.category}`);
 
@@ -43,12 +45,13 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
     if (open) {
       setQuantity(1);
       setNotes("");
+      setItemCustomerName(customerName || "");
       setAddedToCart(false);
     }
   }, [open]);
 
   const handleAddToCart = () => {
-    addItem(item, quantity, notes);
+    addItem(item, quantity, notes, itemCustomerName);
     setAddedToCart(true);
 
     // Close modal after showing success animation
@@ -145,6 +148,18 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Nome (Para quem é este prato?)
+                </label>
+                <Input
+                  placeholder="Ex: Thomas, Eduardo..."
+                  value={itemCustomerName}
+                  onChange={(e) => setItemCustomerName(e.target.value)}
+                  className="mb-4"
+                />
               </div>
 
               <div>

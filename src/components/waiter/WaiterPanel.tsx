@@ -42,6 +42,9 @@
     const [searchQuery, setSearchQuery] = useState("");
     const [editingOrder, setEditingOrder] = useState<Order | null>(null);
     const [scannerOpen, setScannerOpen] = useState(false);
+    const [passwordPromptOpen, setPasswordPromptOpen] = useState(false);
+    const [passwordInput, setPasswordInput] = useState("");
+    const [actionToAuth, setActionToAuth] = useState<{ type: "cancel" | "delete", orderId: string, status?: Order["status"] } | null>(null);
 
     // Add some mock orders if there are none in the system
     useEffect(() => {
@@ -215,6 +218,19 @@
             >
               Escanear QR
             </Button>
+            <Button
+              variant="default"
+              className="bg-primary text-primary-foreground"
+              onClick={() => {
+                // For a manual order, we can just open the menu section or a simplified version
+                // For now, let's just show a toast or a placeholder for the future
+                setSuccessMessage("Use o tablet do garçom para realizar pedidos manuais.");
+                setShowSuccessToast(true);
+                setTimeout(() => setShowSuccessToast(false), 3000);
+              }}
+            >
+              Novo Pedido
+            </Button>
           </div>
 
           <QrScannerDialog
@@ -288,6 +304,11 @@
                               <h3 className="font-semibold text-lg">
                                 Mesa {order.tableNumber}
                               </h3>
+                              {order.customerName && (
+                                <Badge variant="secondary" className="ml-2 bg-primary/10 text-primary border-primary/20">
+                                  {order.customerName}
+                                </Badge>
+                              )}
                               <span className="mx-2 text-muted-foreground">
                                 •
                               </span>
@@ -325,6 +346,11 @@
                                     {item.quantity}x
                                   </span>
                                   <span className="ml-2">{item.name}</span>
+                                  {item.customerName && (
+                                    <span className="ml-2 text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground uppercase tracking-wider font-bold">
+                                      {item.customerName}
+                                    </span>
+                                  )}
                                 </div>
                                 {item.notes && (
                                   <p className="text-xs italic text-muted-foreground ml-6">
@@ -386,9 +412,10 @@
                                 size="sm"
                                 variant="outline"
                                 className="border-red-300 text-red-700 hover:bg-red-50"
-                                onClick={() =>
-                                  updateOrderStatus(order.id, "cancelled")
-                                }
+                                onClick={() => {
+                                  setActionToAuth({ type: "cancel", orderId: order.id, status: "cancelled" });
+                                  setPasswordPromptOpen(true);
+                                }}
                               >
                                 <Trash2 className="h-4 w-4 mr-1" /> Cancelar
                               </Button>
@@ -479,6 +506,62 @@
               </DialogContent>
             </Dialog>
           )}
+          {/* Password Protection Dialog */}
+          <Dialog open={passwordPromptOpen} onOpenChange={setPasswordPromptOpen}>
+            <DialogContent className="sm:max-w-[400px]">
+              <DialogHeader>
+                <DialogTitle>Autorização Necessária</DialogTitle>
+              </DialogHeader>
+              <div className="py-4">
+                <p className="text-sm text-muted-foreground mb-4">
+                  Esta ação requer a senha do garçom ou gerente para ser concluída.
+                </p>
+                <Input
+                  type="password"
+                  placeholder="Digite a senha..."
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      // Trigger same logic as confirm button
+                      document.getElementById("confirm-password-btn")?.click();
+                    }
+                  }}
+                />
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => {
+                  setPasswordPromptOpen(false);
+                  setPasswordInput("");
+                }}>
+                  Cancelar
+                </Button>
+                <Button 
+                  id="confirm-password-btn"
+                  onClick={() => {
+                    // MOCK PASSWORD: 1234
+                    if (passwordInput === "1234") {
+                      if (actionToAuth?.type === "cancel" && actionToAuth.status) {
+                        updateOrderStatus(actionToAuth.orderId, actionToAuth.status);
+                        setSuccessMessage("Pedido cancelado com sucesso.");
+                      }
+                      setShowSuccessToast(true);
+                      setTimeout(() => setShowSuccessToast(false), 2000);
+                      setPasswordPromptOpen(false);
+                      setPasswordInput("");
+                      setActionToAuth(null);
+                    } else {
+                      setSuccessMessage("Senha incorreta!");
+                      setShowSuccessToast(true);
+                      setTimeout(() => setShowSuccessToast(false), 2000);
+                    }
+                  }}
+                >
+                  Confirmar
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </DialogContent>
       </Dialog>
     );
