@@ -45,7 +45,7 @@ const FeaturedItems = ({
   const resolvedSubtitle = subtitle ?? t("featured.subtitle");
   return (
     <section className="w-full bg-background py-12 md:py-16">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mb-10 text-center">
           <h2 className="mb-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
             {resolvedTitle}
@@ -55,7 +55,7 @@ const FeaturedItems = ({
           </p>
         </div>
 
-        <div className="relative px-0 sm:px-6 md:px-10 lg:px-12">
+        <div className="relative -mx-2 px-2 sm:mx-0 sm:px-0">
           <Carousel
             opts={{
               align: "start",
@@ -74,6 +74,7 @@ const FeaturedItems = ({
                       <img
                         src={item.image}
                         alt={item.name}
+                        loading="lazy"
                         className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-[1.04]"
                       />
                       <div className="absolute top-2 right-2 bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-full">
@@ -108,8 +109,8 @@ const FeaturedItems = ({
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="left-1 top-1/2 h-9 w-9 -translate-y-1/2 border border-border/60 bg-card/95 text-foreground shadow-sm sm:-left-2 md:-left-4" />
-            <CarouselNext className="right-1 top-1/2 h-9 w-9 -translate-y-1/2 border border-border/60 bg-card/95 text-foreground shadow-sm sm:-right-2 md:-right-4" />
+            <CarouselPrevious className="left-2 top-1/2 h-9 w-9 -translate-y-1/2 border border-border/60 bg-card/95 text-foreground shadow-sm sm:-left-2" />
+            <CarouselNext className="right-2 top-1/2 h-9 w-9 -translate-y-1/2 border border-border/60 bg-card/95 text-foreground shadow-sm sm:-right-2" />
           </Carousel>
         </div>
 

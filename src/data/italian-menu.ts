@@ -188,7 +188,8 @@ export const ITALIAN_MENU_ITEMS: MenuItemRecord[] = [
     description:
       "Batatas assadas com alecrim, alho confit e azeite extravirgem monocultivar.",
     price: 28,
-    image: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=800&q=80",
+    image:
+      "https://twicpics.moulinex.it/https://sebplatform.api.groupe-seb.com/statics/ecf063b5-0b88-4747-901c-0b702b7ceba9.jpg?w=1920&fit=scale&twic=v1/quality=70/resize=2000",
     category: "sides",
     featured: false,
   },

@@ -81,12 +81,13 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
             </DialogHeader>
 
             <div className="grid gap-4 py-2 sm:py-4">
-              <div className="-mx-1 overflow-hidden rounded-xl border border-border/50 bg-muted/20 sm:mx-0">
+              <div className="overflow-hidden rounded-xl border border-border/50 bg-muted/20">
                 <div className="aspect-[16/10] w-full max-h-[min(52vh,16rem)] sm:max-h-[min(48vh,18rem)]">
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="h-full w-full object-cover object-center"
+                    loading="lazy"
+                    className="h-full w-full bg-muted object-contain object-center sm:object-cover"
                   />
                 </div>
               </div>

@@ -86,7 +86,7 @@ const MenuSection = ({
 
   return (
     <div className="w-full min-w-0 bg-muted/25 py-12">
-      <div className="container mx-auto max-w-full px-4">
+      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8 flex flex-col items-stretch justify-between gap-6 md:flex-row md:items-center">
           <div className="min-w-0 max-w-2xl">
             <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
@@ -120,14 +120,14 @@ const MenuSection = ({
             <h3 className="mb-4 text-xl font-semibold text-foreground">
               {t("menu.featuredTitle")}
             </h3>
-            <Carousel className="w-full max-w-full min-w-0 px-1 sm:px-0">
+            <Carousel className="w-full max-w-full min-w-0 px-0">
               <CarouselContent>
                 {featuredItems.map((item) => (
                   <CarouselItem
                     key={item.id}
                     className="md:basis-1/2 lg:basis-1/3"
                   >
-                    <div className="p-1">
+                    <div className="p-1 sm:p-2">
                       <MenuItem
                         id={item.id}
                         name={item.name}
@@ -140,8 +140,8 @@ const MenuSection = ({
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-1 top-1/2 h-9 w-9 -translate-y-1/2 border border-border/60 bg-card/95 text-foreground shadow-sm sm:left-0 md:-left-2" />
-              <CarouselNext className="right-1 top-1/2 h-9 w-9 -translate-y-1/2 border border-border/60 bg-card/95 text-foreground shadow-sm sm:right-0 md:-right-2" />
+              <CarouselPrevious className="left-0 top-1/2 h-9 w-9 -translate-y-1/2 border border-border/60 bg-card/95 text-foreground shadow-sm sm:-left-2" />
+              <CarouselNext className="right-0 top-1/2 h-9 w-9 -translate-y-1/2 border border-border/60 bg-card/95 text-foreground shadow-sm sm:-right-2" />
             </Carousel>
           </div>
         )}
