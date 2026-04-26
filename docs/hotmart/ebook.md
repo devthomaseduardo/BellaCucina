@@ -3,6 +3,18 @@ title: "Cardápio Digital Moderno"
 subtitle: "Tecnologia sob medida para bares e restaurantes"
 author: "devthomaseduardo"
 date: "2026"
+fontsize: 11pt
+linestretch: 1.08
+geometry:
+  - margin=1.6cm
+  - heightrounded
+header-includes:
+  - \usepackage{microtype}
+  - \usepackage{titlesec}
+  - \titlespacing*{\section}{0pt}{1.1em}{0.6em}
+  - \titlespacing*{\subsection}{0pt}{0.9em}{0.4em}
+  - \setlength{\parskip}{0.35em}
+  - \setlength{\parindent}{0pt}
 ---
 
 ![](docs/hotmart/assets/capa.png)
@@ -53,6 +65,8 @@ O **Cardápio Digital Moderno** é um projeto pronto para você publicar um site
 - Multilíngue (PT/EN/IT)
 
 **Meta do guia**: você conseguir instalar, personalizar e publicar — sem depender de ninguém.
+
+**Demo (visualização online)**: `https://bella-cucina-demo.vercel.app/`
 
 \newpage
 
