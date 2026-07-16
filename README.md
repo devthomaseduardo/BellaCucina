@@ -4,6 +4,10 @@
 
 Site do restaurante Bella Cucina: cardápio digital, reservas, pedidos por QR e painel do garçom. Interface em português, inglês e italiano.
 
+<p align="center">
+  <img src="https://komarev.com/ghpvc/?username=devthomaseduardo&repo=BellaCucina&color=orange" alt="Repository Views" />
+</p>
+
 ## Funcionalidades
 
 - **Cardápio**: fotos, descrições e filtro por categoria
@@ -95,5 +99,11 @@ VITE_BASE_PATH=/
 MIT (veja `LICENSE` se existir no repositório).
 
 ---
+
+> **📊 Visualizações deste repositório**  
+> O badge acima mostra o número de visualizações únicas deste README (atualizado automaticamente via [komarev.com](https://komarev.com/ghpvc)).  
+> Obrigado pela visita! Se o projeto te inspirou, considere deixar uma estrela ⭐️.
+
+**Padrão aplicado em todos os repositórios de Thomas Eduardo.**
 
 **devthomaseduardo**
