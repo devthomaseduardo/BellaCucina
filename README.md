@@ -1,109 +1,109 @@
 # Bella Cucina
 
-<img width="1366" height="768" alt="Cardápio Digital Moderno: Tecnologia Sob Medida para Bares e Restaurantes" src="https://github.com/user-attachments/assets/e4367b33-1f1c-4543-893d-505edbc9b777" />
+**Cardápio digital moderno** para restaurante italiano — pedidos na mesa por QR, reservas online, painel do garçom e i18n (PT · EN · IT).
 
-Site do restaurante Bella Cucina: cardápio digital, reservas, pedidos por QR e painel do garçom. Interface em português, inglês e italiano.
+> Case de portfólio · Full stack · React + Vite + TypeScript  
+> Autor: [Thomas Eduardo](https://thomaseduardo.com.br) · [GitHub](https://github.com/devthomaseduardo)
 
 <p align="center">
   <img src="https://komarev.com/ghpvc/?username=devthomaseduardo&repo=BellaCucina&color=orange" alt="Repository Views" />
 </p>
 
-## Funcionalidades
+---
 
-- **Cardápio**: fotos, descrições e filtro por categoria
-- **Pedidos**: fluxo com QR na mesa
-- **Reservas**: calendário, horário e tamanho do grupo
-- **Layout responsivo**: mobile, tablet e desktop
-- **Tema**: cores e tipografia alinhadas à identidade do restaurante
+## O problema
 
-## Tecnologias
+Bares e restaurantes ainda dependem de cardápio impresso, pedidos no caderno e reservas por telefone. Isso gera fila, erro de pedido e zero rastreio.
 
-- React, TypeScript, Vite
-- Tailwind CSS, componentes Radix / padrão shadcn
-- React Context, React Hook Form, Zod
-- date-fns
+## A solução
 
-## Estrutura do projeto
+Um **site + fluxo operacional** em um só produto:
+
+| Área | O que faz |
+|------|-----------|
+| **Cardápio** | Fotos, descrições, filtro por categoria |
+| **Pedidos** | Carrinho + QR na mesa → pedido na cozinha |
+| **Reservas** | Data, horário, tamanho do grupo, observações |
+| **Garçom** | Painel `/garcom` para aprovar e acompanhar pedidos |
+| **Idiomas** | Português, inglês e italiano |
+
+## Stack
+
+- **Front:** React 18, TypeScript, Vite, Tailwind, Radix/shadcn, Framer Motion  
+- **Estado:** Context API (carrinho)  
+- **Forms:** React Hook Form + Zod  
+- **API demo:** Express em memória (`server.mjs`) — reservas e pedidos  
+- **Extras:** QR Code, scanner ZXing, i18n próprio
+
+## Rotas
+
+| Path | Descrição |
+|------|-----------|
+| `/` | Seleção de idioma |
+| `/menu` | Home + cardápio + reservas + contato |
+| `/garcom` | Painel operacional do garçom |
+
+## Começar em 2 minutos
+
+```bash
+git clone https://github.com/devthomaseduardo/BellaCucina.git
+cd BellaCucina
+npm install
+cp .env.example .env   # opcional
+npm run dev:all        # front (Vite) + API (:3001)
+```
+
+Só o front: `npm run dev`  
+Build: `npm run build` → `npm run preview`
+
+## API (dev)
+
+Documentação: [`docs/api.md`](docs/api.md)
+
+| Método | Rota | Uso |
+|--------|------|-----|
+| `GET` | `/api/health` | Healthcheck |
+| `POST` | `/api/reservations` | Nova reserva |
+| `POST` | `/api/orders` | Novo pedido |
+| `POST` | `/api/orders/:id/approve` | Aprovar pedido |
+
+> Dados em memória — reiniciar a API zera reservas e pedidos. Ideal para demo e portfólio.
+
+## Estrutura
 
 ```
 src/
 ├── components/
-│   ├── cart/
-│   ├── home/
-│   ├── layout/
-│   ├── menu/
-│   ├── reservation/
-│   ├── ui/
-│   └── waiter/
-├── lib/
+│   ├── cart/          # Carrinho + modal de checkout
+│   ├── home/          # Hero, galeria, destaques
+│   ├── menu/          # Cardápio e filtros
+│   ├── reservation/   # Formulário de reserva
+│   ├── waiter/        # Painel do garçom + QR scanner
+│   ├── layout/        # Nav, footer, floating actions
+│   └── ui/            # Design system (shadcn)
+├── data/              # Cardápio italiano (mock)
+├── i18n/              # Traduções PT / EN / IT
+├── lib/               # Utils, QR, Supabase (opcional)
 └── types/
 ```
 
-## Instalação
+## Deploy (Vercel)
 
-1. Clone o repositório:
+1. Importar o repositório na Vercel  
+2. Build: `npm run build` · Output: `dist`  
+3. `vercel.json` já reescreve rotas SPA  
+4. A API em memória **não** sobe na Vercel estática — use só o front, ou hospede `server.mjs` à parte
 
-   ```bash
-   git clone https://github.com/devthomaseduardo/BellaCucina.git
-   cd BellaCucina
-   ```
+## Variáveis
 
-2. Instale as dependências:
+Ver [`.env.example`](.env.example).
 
-   ```bash
-   npm install
-   ```
-
-3. Inicie o front:
-
-   ```bash
-   npm run dev
-   ```
-
-## API REST (reservas e pedidos)
-
-Há uma API em Node (dados em memória) para **reservas**, **pedidos** e **aprovação de pedidos**.
-
-- Documentação: `docs/api.md`
-- Front + API:
-
-```bash
-npm run dev:all
-```
-
-Rotas base:
-
-- `GET /api/health`
-- `POST /api/reservations`
-- `POST /api/orders`
-- `POST /api/orders/:id/approve`
-
-## Build de produção
-
-```bash
-npm run build
-```
-
-## Variáveis de ambiente
-
-Crie um `.env` na raiz, por exemplo:
-
-```
-VITE_SUPABASE_URL=
-VITE_SUPABASE_ANON_KEY=
-VITE_BASE_PATH=/
-```
+Supabase é **opcional**. O fluxo principal usa a API Express local.
 
 ## Licença
 
-MIT (veja `LICENSE` se existir no repositório).
+MIT — uso livre para estudo e demonstração.
 
 ---
 
-> **📊 Visualizações deste repositório**  
-> O badge acima mostra o número de visualizações únicas deste README (atualizado automaticamente via [komarev.com](https://komarev.com/ghpvc)).  
-> Obrigado pela visita! Se o projeto te inspirou, considere deixar uma estrela ⭐️.
-
-**Padrão aplicado em todos os repositórios de Thomas Eduardo.**
-
-**devthomaseduardo**
+**Thomas Eduardo** · [thomaseduardo.com.br](https://thomaseduardo.com.br) · [portfolio / cases](https://thomaseduardo.com.br/#projetos)
