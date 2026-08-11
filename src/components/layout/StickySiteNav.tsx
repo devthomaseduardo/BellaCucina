@@ -13,8 +13,6 @@ import { cn } from "@/lib/utils";
 
 const SECTION_LINKS = [
   { href: "#", key: "home" as const },
-  { href: "#esperienze", key: "experiences" as const },
-  { href: "#cucina", key: "cucina" as const },
   { href: "#menu", key: "menu" as const },
   { href: "#reservations", key: "reservations" as const },
   { href: "#about", key: "about" as const },
@@ -37,9 +35,6 @@ const desktopLinkClass = cn(
   "sm:px-3.5 sm:text-[13px]",
 );
 
-/**
- * Barra fixa: telemóvel com marca centrada + menu; desktop com links centrados e contraste forte.
- */
 export function StickySiteNav() {
   const { t } = useI18n();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -57,7 +52,6 @@ export function StickySiteNav() {
       )}
     >
       <div className="pointer-events-auto mx-auto flex w-full max-w-full min-w-0 flex-col items-center">
-        {/* Telemóvel: largura = conteúdo (marca + botão), até ao limite do ecrã */}
         <div className="flex w-max max-w-[min(100%,calc(100vw-0.5rem))] items-stretch justify-center gap-1.5 md:hidden">
           <div
             className={cn(
@@ -112,7 +106,6 @@ export function StickySiteNav() {
           </Sheet>
         </div>
 
-        {/* Tablet / desktop: cápsula só com a largura dos links (com scroll se faltar espaço) */}
         <div
           className={cn(
             "hidden w-max min-w-0 max-w-[calc(100vw-0.75rem)] md:block",
