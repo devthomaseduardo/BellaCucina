@@ -24,6 +24,7 @@
 
   import { useCart, Order } from "../cart/CartContext";
   import QrScannerDialog from "./QrScannerDialog";
+  import { supabase } from "@/lib/supabase";
 
   interface WaiterPanelProps {
     open: boolean;
@@ -32,12 +33,11 @@
 
   const WaiterPanel: React.FC<WaiterPanelProps> = ({ open, onOpenChange }) => {
     const {
-      orders,
       importOrder,
-      updateOrderStatus,
       setShowSuccessToast,
       setSuccessMessage,
     } = useCart();
+    const [orders, setOrders] = useState<Order[]>([]);
     const [activeTab, setActiveTab] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [editingOrder, setEditingOrder] = useState<Order | null>(null);
@@ -46,12 +46,63 @@
     const [passwordInput, setPasswordInput] = useState("");
     const [actionToAuth, setActionToAuth] = useState<{ type: "cancel" | "delete", orderId: string, status?: Order["status"] } | null>(null);
 
-    // Add some mock orders if there are none in the system
+    // Fetch orders from Supabase and subscribe to realtime updates
     useEffect(() => {
-      if (orders.length === 0) {
-        // Mock data will be added through the cart system now
-      }
-    }, [orders]);
+      if (!open) return;
+
+      const fetchOrders = async () => {
+        const { data, error } = await supabase
+          .from('orders')
+          .select('*, order_items(*)')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error("Error fetching orders:", error);
+          return;
+        }
+
+        if (data) {
+          const mappedOrders: Order[] = data.map(o => ({
+            id: o.id,
+            tableNumber: o.table_number,
+            customerName: o.customer_name || "",
+            status: o.status as Order["status"],
+            totalPrice: Number(o.total_price),
+            createdAt: new Date(o.created_at),
+            updatedAt: new Date(o.updated_at),
+            items: (o.order_items || []).map((item: any) => ({
+              id: item.menu_item_id || item.id,
+              name: item.name,
+              price: Number(item.price),
+              quantity: item.quantity,
+              image: item.image_url || "",
+              category: item.category || "",
+              notes: item.notes || "",
+              customerName: item.customer_name || "",
+            }))
+          }));
+          setOrders(mappedOrders);
+        }
+      };
+
+      fetchOrders();
+
+      const subscription = supabase
+        .channel('public:orders')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
+          // Re-fetch everything to ensure we have items (or we could manually merge, but fetching is easier)
+          fetchOrders();
+        })
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(subscription);
+      };
+    }, [open]);
+
+    // Mock data removal
+    useEffect(() => {
+    }, []);
 
     const filteredOrders = orders.filter((order) => {
       // Filter by tab
@@ -135,15 +186,33 @@
       setEditingOrder({ ...order });
     };
 
-    const handleSaveEdit = () => {
+    const handleSaveEdit = async () => {
       if (!editingOrder) return;
 
-      // Use the updateOrderStatus function from context instead of directly modifying orders
       if (editingOrder) {
-        updateOrderStatus(editingOrder.id, editingOrder.status);
+        await updateOrderStatusLocal(editingOrder.id, editingOrder.status);
       }
 
       setEditingOrder(null);
+    };
+
+    const updateOrderStatusLocal = async (orderId: string, status: Order["status"]) => {
+      try {
+        await supabase
+          .from('orders')
+          .update({ status, updated_at: new Date().toISOString() })
+          .eq('id', orderId);
+          
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order.id === orderId
+              ? { ...order, status, updatedAt: new Date() }
+              : order,
+          ),
+        );
+      } catch (e) {
+        console.error("Failed to update status", e);
+      }
     };
 
     const handleUpdateItemQuantity = (itemId: string, newQuantity: number) => {
@@ -186,16 +255,7 @@
       });
     };
 
-    // Poll for new orders every 5 seconds
-    useEffect(() => {
-      if (open) {
-        const interval = setInterval(() => {
-          // This will cause a re-render with the latest orders from context
-        }, 5000);
-
-        return () => clearInterval(interval);
-      }
-    }, [open]);
+    // Removed local polling since we use Supabase Realtime
 
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -262,7 +322,7 @@
                 setTimeout(() => setShowSuccessToast(false), 2500);
                 return;
               }
-              updateOrderStatus(payload.orderId, "preparing");
+              updateOrderStatusLocal(payload.orderId, "preparing");
               setSuccessMessage(`Pedido #${payload.orderId} aprovado!`);
               setShowSuccessToast(true);
               setTimeout(() => setShowSuccessToast(false), 2500);
@@ -376,7 +436,7 @@
                                 variant="outline"
                                 className="border-blue-300 text-blue-700 hover:bg-blue-50"
                                 onClick={() =>
-                                  updateOrderStatus(order.id, "preparing")
+                                  updateOrderStatusLocal(order.id, "preparing")
                                 }
                               >
                                 <ChefHat className="h-4 w-4 mr-1" /> Preparando
@@ -388,7 +448,7 @@
                                 variant="outline"
                                 className="border-green-300 text-green-700 hover:bg-green-50"
                                 onClick={() =>
-                                  updateOrderStatus(order.id, "ready")
+                                  updateOrderStatusLocal(order.id, "ready")
                                 }
                               >
                                 <Check className="h-4 w-4 mr-1" /> Pronto
@@ -400,7 +460,7 @@
                                 variant="outline"
                                 className="border-gray-300 text-gray-700 hover:bg-gray-50"
                                 onClick={() =>
-                                  updateOrderStatus(order.id, "delivered")
+                                  updateOrderStatusLocal(order.id, "delivered")
                                 }
                               >
                                 <Coffee className="h-4 w-4 mr-1" /> Entregue
@@ -542,7 +602,7 @@
                     // MOCK PASSWORD: 1234
                     if (passwordInput === "1234") {
                       if (actionToAuth?.type === "cancel" && actionToAuth.status) {
-                        updateOrderStatus(actionToAuth.orderId, actionToAuth.status);
+                        updateOrderStatusLocal(actionToAuth.orderId, actionToAuth.status);
                         setSuccessMessage("Pedido cancelado com sucesso.");
                       }
                       setShowSuccessToast(true);

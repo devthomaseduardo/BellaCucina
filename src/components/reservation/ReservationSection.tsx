@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import DateTimePicker from "./DateTimePicker";
 import ReservationForm from "./ReservationForm";
+import { supabase } from "@/lib/supabase";
 
 interface ReservationSectionProps {
   restaurantName?: string;
@@ -48,18 +49,43 @@ const ReservationSection = ({
     setStep(1);
   };
 
-  const handleSubmit = (values: Record<string, unknown>) => {
-    console.log("Reservation submitted:", {
-      ...values,
-      date: selectedDate,
-      time: selectedTimeSlot?.time,
-    });
-    setConfirmation({
-      name: typeof values.name === "string" ? values.name : undefined,
-      partySize:
-        typeof values.partySize === "string" ? values.partySize : undefined,
-    });
-    setStep(3);
+  const handleSubmit = async (values: Record<string, unknown>) => {
+    try {
+      // Create a valid ISO datetime from date + time
+      let datetimeIso = new Date().toISOString();
+      if (selectedDate && selectedTimeSlot?.time) {
+        const dateStr = selectedDate.toISOString().split("T")[0];
+        const timeParts = selectedTimeSlot.time.match(/(\d+):(\d+)\s+(AM|PM)/);
+        if (timeParts) {
+          let hours = parseInt(timeParts[1]);
+          const minutes = timeParts[2];
+          if (timeParts[3] === "PM" && hours < 12) hours += 12;
+          if (timeParts[3] === "AM" && hours === 12) hours = 0;
+          const timeStr = `${hours.toString().padStart(2, '0')}:${minutes}:00`;
+          datetimeIso = new Date(`${dateStr}T${timeStr}`).toISOString();
+        }
+      }
+
+      await supabase.from('reservations').insert({
+        customer_name: String(values.name || ""),
+        customer_email: String(values.email || ""),
+        customer_phone: String(values.phone || ""),
+        party_size: Number(values.partySize || 2),
+        datetime_iso: datetimeIso,
+        special_requests: String(values.specialRequests || ""),
+        status: 'confirmed'
+      });
+      
+      setConfirmation({
+        name: typeof values.name === "string" ? values.name : undefined,
+        partySize:
+          typeof values.partySize === "string" ? values.partySize : undefined,
+      });
+      setStep(3);
+    } catch (e) {
+      console.error("Failed to create reservation", e);
+      alert("Houve um erro ao criar a reserva. Tente novamente.");
+    }
   };
 
   return (

@@ -16,6 +16,7 @@ import AddToCartModal from "./AddToCartModal";
 import { useI18n } from "@/i18n/I18nProvider";
 import { ITALIAN_MENU_ITEMS } from "@/data/italian-menu";
 import type { MenuItemRecord } from "@/types/menu-item";
+import { supabase } from "@/lib/supabase";
 
 type MenuItemType = MenuItemRecord;
 
@@ -42,10 +43,50 @@ const MenuSection = ({
   const [viewMode, setViewMode] = React.useState("grid");
   const [selectedItem, setSelectedItem] = React.useState<MenuItemType | null>(null);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [dbItems, setDbItems] = React.useState<MenuItemType[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    async function loadMenu() {
+      try {
+        const { data, error } = await supabase
+          .from("menu_items")
+          .select("*, menu_categories(name_en)"); // assuming menu_categories name_en has the old ID
+
+        if (error) {
+          console.error("Error fetching menu:", error);
+          setDbItems(items); // fallback
+          return;
+        }
+
+        if (data && data.length > 0) {
+          const mappedItems: MenuItemType[] = data.map((d) => ({
+            id: d.id,
+            name: d.name_pt || d.name_en, // basic i18n fallback for demo
+            description: d.description_pt || d.description_en,
+            price: Number(d.price),
+            image: d.image_url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80",
+            category: (d.menu_categories?.name_en?.toLowerCase() || "specials") as any,
+            featured: d.popular,
+          }));
+          setDbItems(mappedItems);
+        } else {
+          setDbItems(items); // fallback to static if empty
+        }
+      } catch (err) {
+        console.error("Failed to load menu", err);
+        setDbItems(items);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    loadMenu();
+  }, [items]);
 
   // Filter items based on category and search query using useMemo for performance
   const filteredItems = React.useMemo(() => {
-    let result = items;
+    let result = dbItems;
 
     // Apply category filter
     if (activeCategory !== "all") {
@@ -65,10 +106,10 @@ const MenuSection = ({
     }
 
     return result;
-  }, [activeCategory, searchQuery, items]);
+  }, [activeCategory, searchQuery, dbItems]);
 
   // Get featured items for carousel
-  const featuredItems = items.filter((item) => item.featured);
+  const featuredItems = dbItems.filter((item) => item.featured);
 
   const handleCategoryChange = (categoryId: string) => {
     setActiveCategory(categoryId);

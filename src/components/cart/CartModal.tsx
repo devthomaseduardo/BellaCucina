@@ -57,11 +57,9 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
     setItemNotes(item.notes || "");
   };
 
-  const handleSubmitOrder = () => {
+  const handleCheckout = async () => {
     if (!localTableNumber) {
-      setSuccessMessage(
-        "Por favor, informe o número da mesa antes de finalizar o pedido.",
-      );
+      setSuccessMessage("Por favor, informe o número da sua mesa.");
       setShowSuccessToast(true);
       setTimeout(() => setShowSuccessToast(false), 3000);
       return;
@@ -88,7 +86,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
     setOrderSuccess(true);
 
     // Create a new order in the system
-    const orderId = addOrder({
+    const orderId = await addOrder({
       tableNumber: localTableNumber,
       customerName: localCustomerName,
       items: items,

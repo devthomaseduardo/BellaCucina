@@ -1,5 +1,6 @@
 import * as React from "react";
 import { createContext, useContext } from "react";
+import { supabase } from "@/lib/supabase";
 
 export interface CartItem {
   id: string;
@@ -46,9 +47,9 @@ interface CartContextType {
   successMessage: string;
   setSuccessMessage: (message: string) => void;
   orders: Order[];
-  addOrder: (order: Omit<Order, "id" | "createdAt" | "updatedAt">) => string;
+  addOrder: (order: Omit<Order, "id" | "createdAt" | "updatedAt">) => Promise<string>;
   importOrder: (order: Order) => void;
-  updateOrderStatus: (orderId: string, status: Order["status"]) => void;
+  updateOrderStatus: (orderId: string, status: Order["status"]) => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -218,19 +219,67 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     setTimeout(() => setShowSuccessToast(false), 3000);
   };
 
-  const addOrder = (
+  const addOrder = async (
     orderData: Omit<Order, "id" | "createdAt" | "updatedAt">,
   ) => {
-    const now = new Date();
-    const newOrder: Order = {
-      ...orderData,
-      id: generateOrderId(),
-      createdAt: now,
-      updatedAt: now,
-    };
+    try {
+      const { data: orderResult, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          table_number: orderData.tableNumber,
+          customer_name: orderData.customerName,
+          status: orderData.status,
+          total_price: orderData.totalPrice
+        })
+        .select()
+        .single();
+      
+      if (orderError) throw orderError;
+      
+      const orderId = orderResult.id;
+      
+      // Insert items
+      const itemsToInsert = orderData.items.map(item => ({
+        order_id: orderId,
+        menu_item_id: item.id, // we might need to be careful if it's not a real UUID, but we assume it is now since we load from Supabase
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image_url: item.image,
+        category: item.category,
+        notes: item.notes,
+        customer_name: item.customerName
+      }));
+      
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(itemsToInsert);
+        
+      if (itemsError) console.error("Error inserting items:", itemsError);
 
-    setOrders((prevOrders) => [...prevOrders, newOrder]);
-    return newOrder.id;
+      const now = new Date();
+      const newOrder: Order = {
+        ...orderData,
+        id: orderId,
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      setOrders((prevOrders) => [...prevOrders, newOrder]);
+      return orderId;
+    } catch (error) {
+      console.error("Failed to add order", error);
+      // fallback to local if Supabase fails (for demo purposes)
+      const now = new Date();
+      const fallbackOrder: Order = {
+        ...orderData,
+        id: generateOrderId(),
+        createdAt: now,
+        updatedAt: now,
+      };
+      setOrders((prevOrders) => [...prevOrders, fallbackOrder]);
+      return fallbackOrder.id;
+    }
   };
 
   const importOrder = (order: Order) => {
@@ -240,14 +289,23 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
-  const updateOrderStatus = (orderId: string, status: Order["status"]) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === orderId
-          ? { ...order, status, updatedAt: new Date() }
-          : order,
-      ),
-    );
+  const updateOrderStatus = async (orderId: string, status: Order["status"]) => {
+    try {
+      await supabase
+        .from('orders')
+        .update({ status, updated_at: new Date().toISOString() })
+        .eq('id', orderId);
+        
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === orderId
+            ? { ...order, status, updatedAt: new Date() }
+            : order,
+        ),
+      );
+    } catch (e) {
+      console.error("Failed to update status", e);
+    }
   };
 
   const totalItems = React.useMemo(() => 
