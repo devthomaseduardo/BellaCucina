@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import DateTimePicker from "./DateTimePicker";
 import ReservationForm from "./ReservationForm";
 import { supabase } from "@/lib/supabase";
+import { motion, useReducedMotion } from "framer-motion";
 
 interface ReservationSectionProps {
   restaurantName?: string;
@@ -17,6 +18,7 @@ const ReservationSection = ({
   title = "Reservas",
   description = "Escolha data e horário, preencha seus dados e confirme em poucos passos.",
 }: ReservationSectionProps) => {
+  const shouldReduceMotion = useReducedMotion();
   const [step, setStep] = React.useState(1);
   const [confirmation, setConfirmation] = React.useState<{
     name?: string;
@@ -89,46 +91,72 @@ const ReservationSection = ({
   };
 
   return (
-    <section id="reservations" className="bg-background py-16">
-      <div className="container mx-auto px-4">
-        <div className="mb-12 flex flex-col items-center gap-8 md:flex-row">
-          <div className="w-full md:w-1/2">
-            <h2 className="mb-4 font-display text-3xl font-semibold text-foreground">
+    <section id="reservations" className="relative overflow-hidden bg-muted/25 py-16 md:py-24">
+      <div className="absolute inset-0 bella-grid-bg opacity-20" aria-hidden />
+      <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid items-start gap-8 lg:grid-cols-12 lg:gap-10">
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 1, y: 24 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full lg:col-span-5"
+          >
+            <p className="inline-flex rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+              Reservas
+            </p>
+            <h2 className="mt-4 font-display text-3xl text-foreground sm:text-4xl md:text-5xl">
               {title}
             </h2>
-            <p className="mb-6 text-muted-foreground">{description}</p>
-            <div className="relative h-64 md:h-80 overflow-hidden rounded-lg">
+            <p className="mt-4 max-w-lg text-base leading-relaxed text-muted-foreground">
+              {description}
+            </p>
+            <div className="relative mt-8 h-72 overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.045] shadow-[0_24px_90px_-56px_rgba(0,0,0,0.9)] md:h-[32rem]">
               <img
                 src={restaurantImage}
                 alt={restaurantName}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+              <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/86 via-black/20 to-transparent p-6">
                 <div className="text-white">
-                  <h3 className="text-xl font-semibold">{restaurantName}</h3>
-                  <p className="text-sm opacity-90">
-                    Experience authentic cuisine in an elegant setting
+                  <h3 className="font-display text-3xl">{restaurantName}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/78">
+                    Cozinha italiana, salão elegante e pedidos digitais sem fila.
                   </p>
+                  <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-white/78">
+                    <span className="rounded-full border border-white/15 bg-white/[0.08] px-3 py-1 backdrop-blur">
+                      Jantar
+                    </span>
+                    <span className="rounded-full border border-white/15 bg-white/[0.08] px-3 py-1 backdrop-blur">
+                      Eventos
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="w-full rounded-lg border border-border/60 bg-card p-6 text-card-foreground shadow-sm md:w-1/2">
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 1, scale: 0.98 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full rounded-[1.75rem] border border-white/10 bg-white/[0.045] p-5 text-card-foreground shadow-[0_24px_90px_-56px_rgba(0,0,0,0.9)] backdrop-blur-xl sm:p-6 lg:col-span-7"
+          >
             {/* Stepper */}
             <div className="mb-6">
-              <div className="grid grid-cols-3 gap-1 text-center text-[10px] leading-tight text-muted-foreground sm:text-xs">
-                <span className={`min-w-0 px-0.5 ${step >= 1 ? "text-foreground" : ""}`}>
-                  1. Data & horário
+              <div className="grid grid-cols-3 gap-2 text-center text-[10px] leading-tight text-muted-foreground sm:text-xs">
+                <span className={`min-w-0 rounded-full border px-2 py-2 ${step >= 1 ? "border-primary/30 bg-primary/10 text-primary" : "border-white/10 bg-white/[0.03]"}`}>
+                  Data e horário
                 </span>
-                <span className={`min-w-0 px-0.5 ${step >= 2 ? "text-foreground" : ""}`}>
-                  2. Seus dados
+                <span className={`min-w-0 rounded-full border px-2 py-2 ${step >= 2 ? "border-primary/30 bg-primary/10 text-primary" : "border-white/10 bg-white/[0.03]"}`}>
+                  Seus dados
                 </span>
-                <span className={`min-w-0 px-0.5 ${step >= 3 ? "text-foreground" : ""}`}>
-                  3. Confirmação
+                <span className={`min-w-0 rounded-full border px-2 py-2 ${step >= 3 ? "border-primary/30 bg-primary/10 text-primary" : "border-white/10 bg-white/[0.03]"}`}>
+                  Confirmação
                 </span>
               </div>
-              <div className="mt-2 h-1.5 w-full rounded-full bg-muted">
+              <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
                 <div
                   className="h-1.5 rounded-full bg-primary transition-all"
                   style={{
@@ -141,7 +169,7 @@ const ReservationSection = ({
 
             {step === 1 ? (
               <>
-                <h3 className="text-xl font-semibold mb-6 text-center">
+                <h3 className="mb-6 text-center text-xl font-semibold">
                   Selecione data e horário
                 </h3>
                 <DateTimePicker
@@ -153,7 +181,7 @@ const ReservationSection = ({
                   <Button
                     onClick={handleContinue}
                     disabled={!selectedDate || !selectedTimeSlot}
-                    className="w-full md:w-auto"
+                    className="w-full rounded-full md:w-auto"
                   >
                     Continuar
                   </Button>
@@ -162,7 +190,7 @@ const ReservationSection = ({
             ) : step === 2 ? (
               <>
                 <div className="mb-6 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
-                  <Button variant="ghost" onClick={handleBack} className="w-fit shrink-0">
+                  <Button variant="ghost" onClick={handleBack} className="w-fit shrink-0 rounded-full">
                     Voltar
                   </Button>
                   <h3 className="min-w-0 text-lg font-semibold sm:text-xl">
@@ -177,7 +205,10 @@ const ReservationSection = ({
               </>
             ) : (
               <div className="py-6 text-center">
-                <h3 className="text-2xl font-semibold text-foreground">
+                <span className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full border border-primary/25 bg-primary/10 font-display text-xl text-primary">
+                  OK
+                </span>
+                <h3 className="font-display text-3xl text-foreground">
                   Reserva confirmada
                 </h3>
                 <p className="text-muted-foreground mt-2">
@@ -185,7 +216,7 @@ const ReservationSection = ({
                   sua reserva foi registrada.
                 </p>
                 {selectedDate && selectedTimeSlot?.time && (
-                  <div className="mt-5 rounded-2xl border border-border/60 bg-muted/30 p-4 text-sm">
+                  <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.045] p-4 text-sm">
                     <p className="font-medium">Detalhes</p>
                     <p className="text-muted-foreground mt-1">
                       {selectedDate.toLocaleDateString("pt-BR", {
@@ -206,6 +237,7 @@ const ReservationSection = ({
 
                 <div className="mt-6 flex flex-col sm:flex-row gap-2 justify-center">
                   <Button
+                    className="rounded-full"
                     onClick={() => {
                       setStep(1);
                       setSelectedDate(undefined);
@@ -217,6 +249,7 @@ const ReservationSection = ({
                   </Button>
                   <Button
                     variant="outline"
+                    className="rounded-full border-white/10 bg-white/[0.04] hover:bg-white/[0.08]"
                     onClick={() => {
                       document
                         .getElementById("menu")
@@ -228,7 +261,7 @@ const ReservationSection = ({
                 </div>
               </div>
             )}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

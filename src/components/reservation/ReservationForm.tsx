@@ -2,7 +2,6 @@ import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Users, Phone, Mail, MessageSquare } from "lucide-react";
 
 import {
   Form,
@@ -19,16 +18,16 @@ import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+    message: "Informe um nome com pelo menos 2 caracteres.",
   }),
   email: z.string().email({
-    message: "Please enter a valid email address.",
+    message: "Informe um e-mail válido.",
   }),
   phone: z.string().min(10, {
-    message: "Please enter a valid phone number.",
+    message: "Informe um telefone válido.",
   }),
   partySize: z.string().min(1, {
-    message: "Please enter the number of guests.",
+    message: "Informe o número de pessoas.",
   }),
   specialRequests: z.string().optional(),
 });
@@ -58,23 +57,22 @@ const ReservationForm = ({
   });
 
   const handleSubmit = (values: ReservationFormValues) => {
-    // In a real implementation, this would send the data to a server
-    console.log("Form submitted:", values);
     onSubmit?.(values);
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-6 bg-card rounded-lg shadow-md border border-border">
-      <h3 className="text-xl font-semibold mb-4 text-center">
-        Complete Your Reservation
+    <div className="mx-auto w-full max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-4 sm:p-5">
+      <h3 className="mb-4 text-center text-xl font-semibold">
+        Complete sua reserva
       </h3>
 
       {selectedDate && selectedTime && (
-        <div className="mb-6 p-3 bg-muted rounded-md text-center">
-          <p className="text-sm font-medium">Selected Date & Time:</p>
+        <div className="mb-6 rounded-2xl border border-primary/20 bg-primary/10 p-3 text-center">
+          <p className="text-sm font-medium text-primary">Data e horário escolhidos:</p>
           <p className="text-base">
-            {selectedDate.toLocaleDateString("en-US", {
+            {selectedDate.toLocaleDateString("pt-BR", {
               weekday: "long",
+              year: "numeric",
               month: "long",
               day: "numeric",
             })}
@@ -90,12 +88,15 @@ const ReservationForm = ({
             name="partySize"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Number of Guests</FormLabel>
+                <FormLabel>Número de pessoas</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <Input placeholder="2" {...field} type="number" min="1" />
-                    <Users className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                  </div>
+                    <Input
+                      placeholder="2"
+                      {...field}
+                      type="number"
+                      min="1"
+                      className="rounded-full border-white/10 bg-white/[0.04]"
+                    />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -107,9 +108,13 @@ const ReservationForm = ({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Full Name</FormLabel>
+                <FormLabel>Nome completo</FormLabel>
                 <FormControl>
-                  <Input placeholder="John Smith" {...field} />
+                  <Input
+                    placeholder="Seu nome"
+                    {...field}
+                    className="rounded-full border-white/10 bg-white/[0.04]"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -121,12 +126,13 @@ const ReservationForm = ({
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone Number</FormLabel>
+                <FormLabel>Telefone</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <Input placeholder="(555) 123-4567" {...field} />
-                    <Phone className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                  </div>
+                    <Input
+                      placeholder="(11) 99999-9999"
+                      {...field}
+                      className="rounded-full border-white/10 bg-white/[0.04]"
+                    />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -140,14 +146,12 @@ const ReservationForm = ({
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <div className="relative">
                     <Input
-                      placeholder="your@email.com"
+                      placeholder="seu@email.com"
                       {...field}
                       type="email"
+                      className="rounded-full border-white/10 bg-white/[0.04]"
                     />
-                    <Mail className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -159,27 +163,24 @@ const ReservationForm = ({
             name="specialRequests"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Special Requests</FormLabel>
+                <FormLabel>Observações</FormLabel>
                 <FormControl>
-                  <div className="relative">
                     <Textarea
-                      placeholder="Any dietary restrictions or special occasions?"
-                      className="min-h-[80px]"
+                      placeholder="Restrições alimentares, ocasião especial ou preferência de mesa."
+                      className="min-h-[96px] resize-none rounded-2xl border-white/10 bg-white/[0.04]"
                       {...field}
                     />
-                    <MessageSquare className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
-                  </div>
                 </FormControl>
                 <FormDescription>
-                  We'll do our best to accommodate your requests.
+                  A equipe confirma os detalhes no atendimento.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <Button type="submit" className="w-full mt-6">
-            Confirm Reservation
+          <Button type="submit" className="mt-6 w-full rounded-full">
+            Confirmar reserva
           </Button>
         </form>
       </Form>

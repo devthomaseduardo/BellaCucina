@@ -67,9 +67,9 @@ const DateTimePicker = ({
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardContent className="pt-6">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <Card className="border-white/10 bg-white/[0.04] shadow-none">
+          <CardContent className="p-4 sm:p-5">
             <Label className="font-medium mb-2 block">
               Selecione uma data:
             </Label>
@@ -78,13 +78,13 @@ const DateTimePicker = ({
               selected={date}
               onSelect={handleDateSelect}
               disabled={(date) => date < new Date()}
-              className="rounded-md border"
+              className="rounded-xl border border-white/10 bg-black/15"
             />
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
+        <Card className="border-white/10 bg-white/[0.04] shadow-none">
+          <CardContent className="p-4 sm:p-5">
             <Label className="font-medium mb-2 block">
               Selecione um horário:
             </Label>
@@ -93,7 +93,11 @@ const DateTimePicker = ({
                 <Button
                   key={slot.id}
                   variant={timeSlot?.id === slot.id ? "default" : "outline"}
-                  className={`min-h-10 px-2 text-xs sm:text-sm ${!slot.available ? "cursor-not-allowed opacity-50" : ""}`}
+                  className={`min-h-10 rounded-full px-2 text-xs sm:text-sm ${
+                    timeSlot?.id === slot.id
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "border-white/10 bg-white/[0.04] hover:bg-white/[0.08]"
+                  } ${!slot.available ? "cursor-not-allowed opacity-50" : ""}`}
                   disabled={!slot.available}
                   onClick={() => handleTimeSelect(slot)}
                 >
@@ -112,7 +116,7 @@ const DateTimePicker = ({
               </p>
             )}
             {date && timeSlot && selectedTimeIsValid && (
-              <div className="mt-6 p-4 bg-muted rounded-md">
+              <div className="mt-6 rounded-2xl border border-primary/20 bg-primary/10 p-4">
                 <Label className="font-medium">Sua Seleção:</Label>
                 <p className="text-sm mt-1">
                   {date.toLocaleDateString("pt-BR", {

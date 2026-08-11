@@ -316,7 +316,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     items.reduce((total, item) => total + item.price * item.quantity, 0),
   [items]);
 
-  const value = React.useMemo(() => ({
+  const value: CartContextType = {
     items,
     addItem,
     removeItem,
@@ -337,10 +337,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     addOrder,
     importOrder,
     updateOrderStatus,
-  }), [
-    items, totalItems, totalPrice, tableNumber, customerName, 
-    showSuccessToast, successMessage, orders
-  ]);
+  };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

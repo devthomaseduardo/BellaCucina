@@ -51,6 +51,7 @@ const FloatingActions = ({
               className={cn(
                 "h-11 w-11 rounded-xl shadow-sm",
                 "bg-primary text-primary-foreground hover:bg-primary/90",
+                "border border-white/10",
               )}
             />
           ),
@@ -68,7 +69,7 @@ const FloatingActions = ({
                   size="icon"
                   className={cn(
                     "h-11 w-11 rounded-xl shadow-sm",
-                    "bg-secondary/70 hover:bg-secondary",
+                    "border border-white/10 bg-white/[0.06] hover:bg-white/[0.1]",
                     "text-foreground",
                   )}
                 />
@@ -89,8 +90,8 @@ const FloatingActions = ({
               aria-label="Falar no WhatsApp"
               className={cn(
                 "grid place-items-center h-11 w-11 rounded-xl",
-                "bg-emerald-600 text-white shadow-sm",
-                "transition-all hover:-translate-y-0.5 hover:bg-emerald-500 hover:shadow-md",
+                "border border-white/10 bg-white/[0.08] text-primary shadow-sm",
+                "transition-all hover:-translate-y-0.5 hover:bg-white/[0.14] hover:shadow-md",
                 "ring-1 ring-white/15",
               )}
             >
@@ -139,9 +140,7 @@ const FloatingActions = ({
             <div
               className={cn(
                 "px-3 py-1.5 rounded-full text-xs",
-                "bg-background/85 backdrop-blur-md",
-                "border border-border/70 shadow-sm",
-                "text-foreground",
+                "border border-white/10 bg-black/55 text-white shadow-sm backdrop-blur-xl",
               )}
             >
               {a.label}
@@ -159,10 +158,7 @@ const FloatingActions = ({
         aria-label={open ? "Fechar ações" : "Abrir ações"}
         className={cn(
           "relative grid place-items-center h-14 w-14 rounded-full",
-          "shadow-xl border border-border/60",
-          "bg-gradient-to-b from-[hsl(var(--accent))] to-[hsl(var(--secondary))]",
-          "text-foreground",
-          "backdrop-blur-md",
+          "border border-white/10 bg-primary text-primary-foreground shadow-xl backdrop-blur-xl",
           "transition-all hover:-translate-y-0.5 hover:shadow-2xl active:translate-y-0",
         )}
       >
@@ -174,4 +170,3 @@ const FloatingActions = ({
 };
 
 export default FloatingActions;
-

@@ -45,7 +45,7 @@ const WaiterLogin = ({ onLogin }: LoginProps) => {
       });
 
       if (error) throw error;
-    } catch (err: any) {
+    } catch {
       setError("Credenciais inválidas. Tente novamente.");
     } finally {
       setLoading(false);

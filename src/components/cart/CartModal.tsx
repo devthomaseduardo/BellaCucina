@@ -101,7 +101,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col">
+        <DialogContent className="flex max-h-[90vh] flex-col border-white/10 bg-background/95 shadow-[0_24px_90px_-48px_rgba(0,0,0,0.95)] backdrop-blur-xl sm:max-w-[540px]">
           {orderSuccess ? (
             <div className="py-12 text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
@@ -145,7 +145,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                     })}
                     className="text-foreground"
                   />
-                  <div className="bg-muted/40 border border-border/60 p-4 rounded-xl w-full max-w-[420px] text-left">
+                  <div className="w-full max-w-[420px] rounded-xl border border-white/10 bg-white/[0.045] p-4 text-left">
                     <p className="font-medium">Resumo</p>
                     <p className="text-sm text-muted-foreground mt-1">
                       Mesa: {localTableNumber}
@@ -163,7 +163,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
 
                   <div className="w-full max-w-[420px] flex flex-col sm:flex-row gap-2 justify-center">
                     <Button
-                      className="w-full"
+                      className="w-full rounded-full"
                       onClick={() => {
                         clearCart();
                         setOrderSuccess(false);
@@ -175,7 +175,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                     </Button>
                     <Button
                       variant="outline"
-                      className="w-full"
+                      className="w-full rounded-full border-white/10 bg-white/[0.04] hover:bg-white/[0.08]"
                       onClick={() => {
                         setSuccessMessage("QR Code pronto para o garçom.");
                         setShowSuccessToast(true);
@@ -224,7 +224,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                   <Button
                     variant="outline"
                     onClick={() => onOpenChange(false)}
-                    className="mt-2"
+                    className="mt-2 rounded-full border-white/10 bg-white/[0.04] hover:bg-white/[0.08]"
                   >
                     Continuar Comprando
                   </Button>
@@ -244,7 +244,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                         value={localTableNumber}
                         onChange={(e) => setLocalTableNumber(e.target.value)}
                         placeholder="Nº da mesa"
-                        className="mt-1"
+                        className="mt-1 rounded-full border-white/10 bg-white/[0.04]"
                       />
                     </div>
                     <div>
@@ -260,7 +260,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                           value={localCustomerName}
                           onChange={(e) => setLocalCustomerName(e.target.value)}
                           placeholder="Ex: Nome do grupo ou líder"
-                          className="pl-9"
+                          className="rounded-full border-white/10 bg-white/[0.04] pl-9"
                         />
                         <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                       </div>
@@ -270,8 +270,8 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                   <ScrollArea className="flex-1 pr-4 max-h-[40vh]">
                     <div className="space-y-4">
                       {items.map((item) => (
-                        <div key={item.id} className="flex border-b pb-4">
-                          <div className="h-16 w-16 rounded overflow-hidden flex-shrink-0">
+                        <div key={item.id} className="flex border-b border-white/10 pb-4">
+                          <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl">
                             <img
                               src={item.image}
                               alt={item.name}
@@ -294,7 +294,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                                 R$ {item.price.toFixed(2)}
                               </p>
                               {item.customerName && (
-                                <span className="text-[10px] bg-primary/5 text-primary px-1.5 py-0.5 rounded-md border border-primary/10 font-medium">
+                                <span className="rounded-md border border-primary/10 bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
                                   Para: {item.customerName}
                                 </span>
                               )}
@@ -306,7 +306,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                                   value={itemNotes}
                                   onChange={(e) => setItemNotes(e.target.value)}
                                   placeholder="Observações (ex: sem cebola)"
-                                  className="text-sm h-20"
+                                  className="h-20 rounded-2xl border-white/10 bg-white/[0.04] text-sm"
                                 />
                                 <div className="flex justify-end mt-1 space-x-2">
                                   <Button
@@ -337,7 +337,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                                     <Button
                                       variant="outline"
                                       size="icon"
-                                      className="h-7 w-7"
+                                      className="h-7 w-7 rounded-full border-white/10 bg-white/[0.04]"
                                       onClick={() =>
                                         updateQuantity(
                                           item.id,
@@ -353,7 +353,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                                     <Button
                                       variant="outline"
                                       size="icon"
-                                      className="h-7 w-7"
+                                      className="h-7 w-7 rounded-full border-white/10 bg-white/[0.04]"
                                       onClick={() =>
                                         updateQuantity(
                                           item.id,
@@ -381,22 +381,22 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                     </div>
                   </ScrollArea>
 
-                  <div className="pt-4 border-t mt-4">
+                  <div className="mt-4 border-t border-white/10 pt-4">
                     <div className="flex justify-between font-medium text-lg mb-4">
                       <span>Total:</span>
                       <span>R$ {totalPrice.toFixed(2)}</span>
                     </div>
                     <DialogFooter className="flex-col sm:flex-col gap-2">
                       <Button
-                        onClick={handleSubmitOrder}
-                        className="w-full bg-green-600 hover:bg-green-700"
+                        onClick={handleCheckout}
+                        className="w-full rounded-full"
                       >
                         Finalizar Pedido
                       </Button>
                       <Button
                         variant="outline"
                         onClick={() => clearCart()}
-                        className="w-full"
+                        className="w-full rounded-full border-white/10 bg-white/[0.04] hover:bg-white/[0.08]"
                       >
                         Limpar Carrinho
                       </Button>

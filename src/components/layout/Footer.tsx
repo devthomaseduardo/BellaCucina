@@ -1,5 +1,4 @@
 import React from "react";
-import { Facebook, Instagram, Twitter } from "lucide-react";
 
 interface FooterProps {
   restaurantName?: string;
@@ -15,124 +14,136 @@ const Footer = ({
   email = "info@restaurant.com",
 }: FooterProps) => {
   return (
-    <footer className="w-full bg-slate-900 px-4 py-12 text-white md:px-8 md:py-16">
-      <div className="container mx-auto">
+    <footer className="w-full border-t border-white/10 bg-black px-4 py-12 text-white md:px-8 md:py-16">
+      <div className="container mx-auto max-w-7xl">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {/* Restaurant Info */}
           <div>
-            <h3 className="mb-4 text-xl font-semibold text-zinc-50">{restaurantName}</h3>
-            <p className="mb-2 text-zinc-400">{address}</p>
-            <p className="mb-2 text-zinc-400">{phone}</p>
-            <p className="text-zinc-400">{email}</p>
+            <h3 className="mb-4 font-display text-3xl text-zinc-50">{restaurantName}</h3>
+            <p className="max-w-xs text-sm leading-relaxed text-zinc-400">
+              Cardápio digital, reservas e pedidos por QR para uma experiência italiana moderna.
+            </p>
+            <div className="mt-5 space-y-2 text-sm text-zinc-400">
+              <p className="flex items-center gap-2">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">Rua</span>
+                {address}
+              </p>
+              <p className="flex items-center gap-2">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">Tel</span>
+                {phone}
+              </p>
+              <p className="flex items-center gap-2">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">Mail</span>
+                {email}
+              </p>
+            </div>
           </div>
 
-          {/* Hours */}
           <div>
-            <h3 className="mb-4 text-xl font-semibold text-zinc-50">Hours</h3>
+            <h3 className="mb-4 text-lg font-semibold text-zinc-50">Horários</h3>
             <p className="mb-2 text-zinc-400">
-              Monday - Thursday: 11:00 AM - 10:00 PM
+              Segunda a quinta: 11:00 às 22:00
             </p>
             <p className="mb-2 text-zinc-400">
-              Friday - Saturday: 11:00 AM - 11:00 PM
+              Sexta e sábado: 11:00 às 23:00
             </p>
-            <p className="text-zinc-400">Sunday: 12:00 PM - 9:00 PM</p>
+            <p className="text-zinc-400">Domingo: 12:00 às 21:00</p>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <h3 className="mb-4 text-xl font-semibold text-zinc-50">Quick Links</h3>
+            <h3 className="mb-4 text-lg font-semibold text-zinc-50">Navegação</h3>
             <ul className="space-y-2">
               <li>
                 <a
                   href="#"
-                  className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
+                  className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 >
-                  Home
+                  Início
                 </a>
               </li>
               <li>
                 <a
                   href="#menu"
-                  className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
+                  className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 >
-                  Menu
+                  Cardápio
                 </a>
               </li>
               <li>
                 <a
                   href="#reservations"
-                  className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
+                  className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 >
-                  Reservations
+                  Reservas
                 </a>
               </li>
               <li>
                 <a
                   href="#about"
-                  className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
+                  className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 >
-                  About Us
+                  Sobre
                 </a>
               </li>
               <li>
                 <a
                   href="#contact"
-                  className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
+                  className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 >
-                  Contact
+                  Contato
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Social Media */}
           <div>
-            <h3 className="mb-4 text-xl font-semibold text-zinc-50">Follow Us</h3>
+            <h3 className="mb-4 text-lg font-semibold text-zinc-50">Acompanhe</h3>
             <div className="flex space-x-4">
               <a
                 href="#"
-                className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
+                aria-label="Facebook"
+                className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
               >
-                <Facebook size={24} />
+                FB
               </a>
               <a
                 href="#"
-                className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
+                aria-label="Instagram"
+                className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
               >
-                <Instagram size={24} />
+                IG
               </a>
               <a
                 href="#"
-                className="text-zinc-400 transition-colors hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/50"
+                aria-label="Twitter"
+                className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
               >
-                <Twitter size={24} />
+                X
               </a>
             </div>
             <div className="mt-6">
-              <h4 className="text-lg font-semibold mb-2">
-                Subscribe to our newsletter
+              <h4 className="mb-2 text-lg font-semibold">
+                Receba novidades
               </h4>
               <div className="flex">
                 <input
                   type="email"
-                  placeholder="Your email"
-                  className="flex-1 rounded-l-md border border-zinc-700 bg-zinc-800/80 px-3 py-2 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-300/30"
+                  placeholder="Seu e-mail"
+                  className="min-w-0 flex-1 rounded-l-full border border-white/10 bg-white/[0.05] px-4 py-2 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-primary/40"
                 />
                 <button
                   type="button"
-                  className="rounded-r-md bg-primary px-4 py-2 text-primary-foreground transition-colors hover:bg-primary/90"
+                  className="rounded-r-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                 >
-                  Subscribe
+                  Enviar
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-12 border-t border-zinc-800 pt-8 text-center text-zinc-500">
+        <div className="mt-12 border-t border-white/10 pt-8 text-center text-zinc-500">
           <p>
-            &copy; {new Date().getFullYear()} {restaurantName}. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} {restaurantName}. Todos os direitos reservados.
           </p>
         </div>
       </div>

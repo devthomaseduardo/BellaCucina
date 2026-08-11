@@ -50,16 +50,20 @@ const MenuCategoryFilter = ({
   };
 
   return (
-    <div className="w-full min-w-0 max-w-full bg-background border-b border-border py-2">
+    <div className="w-full min-w-0 max-w-full border-y border-white/10 bg-white/[0.025] py-3">
       <ScrollArea className="w-full max-w-full min-w-0">
-        <div className="flex space-x-2 px-4 pb-2">
+        <div className="flex gap-2 px-1 pb-1">
           {resolvedCategories.map((category) => (
             <Button
               key={category.id}
               variant={selectedCategory === category.id ? "default" : "outline"}
               size="sm"
               onClick={() => handleCategoryClick(category.id)}
-              className="whitespace-nowrap transition-colors"
+              className={
+                selectedCategory === category.id
+                  ? "h-9 whitespace-nowrap rounded-full bg-primary px-4 font-semibold text-primary-foreground hover:bg-primary/90"
+                  : "h-9 whitespace-nowrap rounded-full border-white/10 bg-white/[0.04] px-4 text-muted-foreground hover:bg-white/[0.08] hover:text-foreground"
+              }
             >
               {category.icon && <span className="mr-2">{category.icon}</span>}
               {category.name}

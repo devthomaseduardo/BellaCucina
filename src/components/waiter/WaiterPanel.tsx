@@ -89,7 +89,7 @@
 
       const subscription = supabase
         .channel('public:orders')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
           // Re-fetch everything to ensure we have items (or we could manually merge, but fetching is easier)
           fetchOrders();
         })

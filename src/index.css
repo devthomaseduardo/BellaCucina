@@ -1,98 +1,107 @@
 @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+@tailwind components;
+@tailwind utilities;
 
-  @layer base {
-    :root {
-      --font-sans: "Inter";
-      --font-serif: "Playfair Display";
+@layer base {
+  :root,
+  .dark {
+    --font-sans: "Inter";
+    --font-serif: "Playfair Display";
 
-      /* Fine dining palette (ivory + ink + burgundy + champagne gold) */
-      --background: 36 33% 97%;
-      --foreground: 222 30% 10%;
+    --background: 18 23% 5%;
+    --foreground: 38 34% 94%;
 
-      --card: 36 33% 98%;
-      --card-foreground: 222 30% 10%;
+    --card: 18 22% 8%;
+    --card-foreground: 38 34% 94%;
 
-      --popover: 36 33% 98%;
-      --popover-foreground: 222 30% 10%;
+    --popover: 18 22% 8%;
+    --popover-foreground: 38 34% 94%;
 
-      --primary: 350 55% 22%;
-      --primary-foreground: 36 33% 98%;
+    --primary: 7 76% 56%;
+    --primary-foreground: 38 34% 96%;
 
-      --secondary: 36 20% 92%;
-      --secondary-foreground: 222 30% 12%;
+    --secondary: 197 20% 17%;
+    --secondary-foreground: 38 34% 94%;
 
-      --muted: 36 18% 93%;
-      --muted-foreground: 222 12% 36%;
+    --muted: 20 18% 13%;
+    --muted-foreground: 38 17% 70%;
 
-      --accent: 42 55% 86%;
-      --accent-foreground: 222 30% 12%;
+    --accent: 35 74% 64%;
+    --accent-foreground: 18 23% 5%;
 
-      --destructive: 0 84.2% 60.2%;
-      --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 42 30% 94%;
 
-      --border: 36 16% 86%;
-      --input: 36 16% 86%;
-      --ring: 42 45% 52%;
+    --border: 28 18% 20%;
+    --input: 28 18% 20%;
+    --ring: 7 76% 56%;
 
-      --radius: 0.75rem;
+    --radius: 0.875rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    overflow-x: clip;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    overflow-x: clip;
+    background:
+      linear-gradient(180deg, hsl(18 23% 5%) 0%, hsl(16 27% 4%) 48%, hsl(18 24% 6%) 100%);
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.34);
+    color: hsl(var(--foreground));
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-serif);
+    letter-spacing: 0;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .bella-panel {
+    @apply border border-white/10 bg-white/[0.045] shadow-[0_24px_80px_-48px_rgba(0,0,0,0.9)] backdrop-blur-xl;
+  }
+
+  .bella-grid-bg {
+    background-image:
+      linear-gradient(to right, hsl(38 34% 94% / 0.052) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(38 34% 94% / 0.04) 1px, transparent 1px);
+    background-size: 72px 72px;
+    background-position: center top;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  @keyframes bella-marquee {
+    from {
+      transform: translateX(0);
     }
-
-    .dark {
-      --background: 225 20% 7%;
-      --foreground: 36 20% 96%;
-
-      --card: 225 18% 9%;
-      --card-foreground: 36 20% 96%;
-
-      --popover: 225 18% 9%;
-      --popover-foreground: 36 20% 96%;
-
-      --primary: 42 55% 62%;
-      --primary-foreground: 225 20% 8%;
-
-      --secondary: 225 14% 14%;
-      --secondary-foreground: 36 20% 96%;
-
-      --muted: 225 14% 14%;
-      --muted-foreground: 36 10% 72%;
-
-      --accent: 225 14% 16%;
-      --accent-foreground: 36 20% 96%;
-
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 210 40% 98%;
-
-      --border: 225 14% 16%;
-      --input: 225 14% 16%;
-      --ring: 42 45% 60%;
+    to {
+      transform: translateX(-50%);
     }
   }
 
-  @layer base {
-    * {
-      @apply border-border;
-    }
-    html {
-      overflow-x: clip;
-    }
-    body {
-      @apply bg-background text-foreground font-sans antialiased;
-      overflow-x: clip;
-    }
+  .animate-bella-marquee {
+    animation: bella-marquee 24s linear infinite;
   }
-
-  @layer utilities {
-    .font-display {
-      font-family: var(--font-serif);
-      letter-spacing: -0.02em;
-    }
-    .scrollbar-hide {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-    .scrollbar-hide::-webkit-scrollbar {
-      display: none;
-    }
-  }
+}

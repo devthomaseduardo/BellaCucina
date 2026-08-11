@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Search, Filter, PlusCircle } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   Carousel,
   CarouselContent,
@@ -15,7 +15,7 @@ import MenuItem from "./MenuItem";
 import AddToCartModal from "./AddToCartModal";
 import { useI18n } from "@/i18n/I18nProvider";
 import { ITALIAN_MENU_ITEMS } from "@/data/italian-menu";
-import type { MenuItemRecord } from "@/types/menu-item";
+import type { MenuCategoryId, MenuItemRecord } from "@/types/menu-item";
 import { supabase } from "@/lib/supabase";
 
 type MenuItemType = MenuItemRecord;
@@ -35,6 +35,7 @@ const MenuSection = ({
   showQrCode = true,
 }: MenuSectionProps) => {
   const { t } = useI18n();
+  const shouldReduceMotion = useReducedMotion();
   const resolvedTitle = title ?? t("menu.sectionTitle");
   const resolvedDescription = description ?? t("menu.sectionDescription");
 
@@ -48,6 +49,16 @@ const MenuSection = ({
 
   React.useEffect(() => {
     async function loadMenu() {
+      const hasSupabaseConfig = Boolean(
+        import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY,
+      );
+
+      if (!hasSupabaseConfig) {
+        setDbItems(items);
+        setLoading(false);
+        return;
+      }
+
       try {
         const { data, error } = await supabase
           .from("menu_items")
@@ -66,7 +77,7 @@ const MenuSection = ({
             description: d.description_pt || d.description_en,
             price: Number(d.price),
             image: d.image_url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80",
-            category: (d.menu_categories?.name_en?.toLowerCase() || "specials") as any,
+            category: (d.menu_categories?.name_en?.toLowerCase() || "specials") as MenuCategoryId,
             featured: d.popular,
           }));
           setDbItems(mappedItems);
@@ -109,7 +120,10 @@ const MenuSection = ({
   }, [activeCategory, searchQuery, dbItems]);
 
   // Get featured items for carousel
-  const featuredItems = dbItems.filter((item) => item.featured);
+  const featuredItems = React.useMemo(
+    () => dbItems.filter((item) => item.featured),
+    [dbItems],
+  );
 
   const handleCategoryChange = (categoryId: string) => {
     setActiveCategory(categoryId);
@@ -125,19 +139,31 @@ const MenuSection = ({
   };
 
   return (
-    <div className="w-full min-w-0 bg-muted/25 py-12">
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 flex flex-col items-stretch justify-between gap-6 md:flex-row md:items-center">
-          <div className="min-w-0 max-w-2xl">
-            <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+    <div className="relative w-full min-w-0 overflow-hidden bg-background py-16 md:py-24">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={shouldReduceMotion ? false : { opacity: 1, y: 24 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-9 flex flex-col items-stretch justify-between gap-6 md:flex-row md:items-end"
+        >
+          <div className="min-w-0 max-w-3xl">
+            <p className="inline-flex rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+              Cardápio digital
+            </p>
+            <h2 className="mt-4 font-display text-3xl text-foreground sm:text-4xl md:text-5xl">
               {resolvedTitle}
             </h2>
-            <p className="mt-2 text-muted-foreground">{resolvedDescription}</p>
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
+              {resolvedDescription}
+            </p>
           </div>
 
           {showQrCode && (
-            <div className="flex w-full max-w-full flex-col gap-3 rounded-lg border border-border/60 bg-card p-4 text-card-foreground shadow-sm sm:flex-row sm:items-center sm:gap-4 md:mt-0 md:w-auto md:max-w-md md:shrink-0">
-              <div className="rounded-md border-2 border-primary bg-background p-2">
+            <div className="flex w-full max-w-full flex-col gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-4 text-card-foreground shadow-[0_24px_70px_-54px_rgba(0,0,0,0.9)] sm:flex-row sm:items-center sm:gap-4 md:mt-0 md:w-auto md:max-w-md md:shrink-0">
+              <div className="rounded-xl border border-primary/35 bg-white p-2">
                 <img
                   src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://bella-cucina-demo.vercel.app/"
                   alt={t("menu.qrTitle")}
@@ -145,27 +171,32 @@ const MenuSection = ({
                 />
               </div>
               <div>
-                <p className="text-lg font-medium text-foreground">{t("menu.qrTitle")}</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-lg font-semibold text-foreground">
+                  {t("menu.qrTitle")}
+                </p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                   {t("menu.qrDescription")}
                 </p>
               </div>
             </div>
           )}
-        </div>
+        </motion.div>
 
         {/* Featured Items Carousel */}
         {featuredItems.length > 0 && (
           <div className="mb-12">
-            <h3 className="mb-4 text-xl font-semibold text-foreground">
+            <h3 className="mb-4 font-display text-2xl text-foreground">
               {t("menu.featuredTitle")}
             </h3>
-            <Carousel className="w-full max-w-full min-w-0 px-0">
+            <Carousel
+              opts={{ align: "start", loop: true }}
+              className="w-full max-w-full min-w-0 px-0"
+            >
               <CarouselContent>
                 {featuredItems.map((item) => (
                   <CarouselItem
                     key={item.id}
-                    className="md:basis-1/2 lg:basis-1/3"
+                    className="md:basis-1/2 xl:basis-1/3"
                   >
                     <div className="p-1 sm:p-2">
                       <MenuItem
@@ -180,8 +211,8 @@ const MenuSection = ({
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-0 top-1/2 h-9 w-9 -translate-y-1/2 border border-border/60 bg-card/95 text-foreground shadow-sm sm:-left-2" />
-              <CarouselNext className="right-0 top-1/2 h-9 w-9 -translate-y-1/2 border border-border/60 bg-card/95 text-foreground shadow-sm sm:-right-2" />
+              <CarouselPrevious className="left-2 top-1/2 h-10 w-10 -translate-y-1/2 border-white/15 bg-black/45 text-white shadow-sm backdrop-blur hover:bg-black/65 sm:-left-3" />
+              <CarouselNext className="right-2 top-1/2 h-10 w-10 -translate-y-1/2 border-white/15 bg-black/45 text-white shadow-sm backdrop-blur hover:bg-black/65 sm:-right-3" />
             </Carousel>
           </div>
         )}
@@ -189,12 +220,14 @@ const MenuSection = ({
         {/* Search and Filter Controls */}
         <div className="mb-6 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-4">
           <div className="relative min-w-0 flex-1">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              Buscar
+            </span>
             <Input
               placeholder={t("menu.searchPlaceholder")}
               value={searchQuery}
               onChange={handleSearchChange}
-              className="min-w-0 pl-9"
+              className="h-11 min-w-0 rounded-full border-white/10 bg-white/[0.045] pl-20 text-foreground placeholder:text-muted-foreground focus-visible:ring-primary/70"
             />
           </div>
           <div className="flex min-w-0 shrink-0 gap-2 sm:items-center">
@@ -204,17 +237,23 @@ const MenuSection = ({
               onValueChange={setViewMode}
               className="min-w-0 flex-1 sm:w-[200px] sm:flex-none"
             >
-              <TabsList className="grid h-10 w-full min-w-0 grid-cols-2">
-                <TabsTrigger value="grid" className="truncate px-2 text-xs sm:text-sm">
+              <TabsList className="grid h-11 w-full min-w-0 grid-cols-2 rounded-full border border-white/10 bg-white/[0.045] p-1">
+                <TabsTrigger value="grid" className="truncate rounded-full px-2 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground sm:text-sm">
                   {t("menu.viewGrid")}
                 </TabsTrigger>
-                <TabsTrigger value="list" className="truncate px-2 text-xs sm:text-sm">
+                <TabsTrigger value="list" className="truncate rounded-full px-2 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground sm:text-sm">
                   {t("menu.viewList")}
                 </TabsTrigger>
               </TabsList>
             </Tabs>
-            <Button variant="outline" size="icon" className="h-10 w-10 shrink-0" type="button">
-              <Filter className="h-4 w-4" />
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-11 shrink-0 rounded-full border-white/10 bg-white/[0.045] px-4 text-xs font-semibold text-foreground hover:bg-white/[0.08]"
+              type="button"
+              aria-label="Abrir filtros"
+            >
+              Filtros
             </Button>
           </div>
         </div>
@@ -233,8 +272,12 @@ const MenuSection = ({
           className="mt-6 w-full min-w-0 max-w-full"
         >
           <TabsContent value="grid">
-            {filteredItems.length > 0 ? (
-              <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
+            {loading ? (
+              <div className="rounded-2xl border border-white/10 bg-white/[0.045] p-8 text-center text-muted-foreground">
+                Carregando cardápio...
+              </div>
+            ) : filteredItems.length > 0 ? (
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {filteredItems.map((item) => (
                   <MenuItem
                     key={item.id}
@@ -249,21 +292,25 @@ const MenuSection = ({
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.045] py-12 text-center">
                 <p className="text-muted-foreground">{t("menu.empty")}</p>
               </div>
             )}
           </TabsContent>
 
           <TabsContent value="list">
-            {filteredItems.length > 0 ? (
+            {loading ? (
+              <div className="rounded-2xl border border-white/10 bg-white/[0.045] p-8 text-center text-muted-foreground">
+                Carregando cardápio...
+              </div>
+            ) : filteredItems.length > 0 ? (
               <div className="space-y-4">
                 {filteredItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex min-w-0 flex-col gap-4 rounded-lg border border-border/60 bg-card p-4 text-card-foreground md:flex-row"
+                    className="flex min-w-0 flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.045] p-4 text-card-foreground md:flex-row"
                   >
-                    <div className="h-52 w-full shrink-0 overflow-hidden rounded-lg sm:h-56 md:h-full md:min-h-[14rem] md:w-[min(100%,14rem)] md:max-w-[40%]">
+                    <div className="h-52 w-full shrink-0 overflow-hidden rounded-xl sm:h-56 md:h-full md:min-h-[14rem] md:w-[min(100%,14rem)] md:max-w-[40%]">
                       <img
                         src={item.image}
                         alt={item.name}
@@ -276,7 +323,7 @@ const MenuSection = ({
                           <h3 className="text-lg font-semibold sm:text-xl">
                             {item.name}
                           </h3>
-                          <span className="mt-1 inline-block rounded-full bg-primary/10 px-2 py-1 text-xs text-primary">
+                          <span className="mt-2 inline-block rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
                             {t(`menu.category.${item.category}`)}
                           </span>
                         </div>
@@ -289,10 +336,9 @@ const MenuSection = ({
                       </p>
                       <div className="mt-4">
                         <Button
-                          className="gap-2"
+                          className="gap-2 rounded-full"
                           onClick={() => handleAddToCart(item)}
                         >
-                          <PlusCircle size={18} />
                           {t("menu.addToOrder")}
                         </Button>
                       </div>
@@ -301,7 +347,7 @@ const MenuSection = ({
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.045] py-12 text-center">
                 <p className="text-muted-foreground">{t("menu.empty")}</p>
               </div>
             )}
