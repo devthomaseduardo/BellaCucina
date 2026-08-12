@@ -246,15 +246,6 @@ const MenuSection = ({
                 </TabsTrigger>
               </TabsList>
             </Tabs>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-11 shrink-0 rounded-full border-white/10 bg-white/[0.045] px-4 text-xs font-semibold text-foreground hover:bg-white/[0.08]"
-              type="button"
-              aria-label="Abrir filtros"
-            >
-              Filtros
-            </Button>
           </div>
         </div>
 

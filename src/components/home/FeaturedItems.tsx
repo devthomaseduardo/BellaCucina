@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/I18nProvider";
 import { FEATURED_HIGHLIGHT_ITEMS } from "@/data/italian-menu";
+import { useNavigate } from "react-router-dom";
 
 interface FeaturedItem {
   id: string;
@@ -45,6 +46,7 @@ const FeaturedItems = ({
   const shouldReduceMotion = useReducedMotion();
   const resolvedTitle = title ?? t("featured.title");
   const resolvedSubtitle = subtitle ?? t("featured.subtitle");
+  const navigate = useNavigate();
 
   return (
     <section className="w-full overflow-hidden bg-background py-14 md:py-20">
@@ -73,9 +75,7 @@ const FeaturedItems = ({
             size="lg"
             className="w-full rounded-full border-white/15 bg-white/[0.04] text-foreground hover:bg-white/[0.08] sm:w-fit"
             type="button"
-            onClick={() =>
-              document.getElementById("menu")?.scrollIntoView({ behavior: "smooth" })
-            }
+            onClick={() => navigate("/cardapio")}
           >
             {t("featured.ctaFull")}
             <ArrowRight className="ml-2 h-4 w-4" aria-hidden />
@@ -141,7 +141,11 @@ const FeaturedItems = ({
                         <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
                           assinatura
                         </span>
-                        <Button size="sm" className="h-9 rounded-full px-4 text-xs">
+                        <Button
+                          size="sm"
+                          className="h-9 rounded-full px-4 text-xs"
+                          onClick={() => navigate("/cardapio")}
+                        >
                           {t("featured.orderNow")}
                           <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden />
                         </Button>

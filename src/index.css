@@ -44,8 +44,19 @@
   }
 
   html {
+    background: hsl(var(--background));
     overflow-x: clip;
     scroll-behavior: smooth;
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  #root {
+    background: hsl(var(--background));
   }
 
   body {

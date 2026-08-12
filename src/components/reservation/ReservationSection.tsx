@@ -91,7 +91,7 @@ const ReservationSection = ({
   };
 
   return (
-    <section id="reservations" className="relative overflow-hidden bg-muted/25 py-16 md:py-24">
+    <section id="reservations" className="relative scroll-mt-24 overflow-hidden bg-muted/25 py-16 md:py-24">
       <div className="absolute inset-0 bella-grid-bg opacity-20" aria-hidden />
       <div className="container relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-start gap-8 lg:grid-cols-12 lg:gap-10">
@@ -120,10 +120,10 @@ const ReservationSection = ({
               <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/86 via-black/20 to-transparent p-6">
                 <div className="text-white">
                   <h3 className="font-display text-3xl">{restaurantName}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-white/78">
+                  <p className="mt-2 text-sm leading-relaxed text-white/[0.78]">
                     Cozinha italiana, salão elegante e pedidos digitais sem fila.
                   </p>
-                  <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-white/78">
+                  <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-white/[0.78]">
                     <span className="rounded-full border border-white/15 bg-white/[0.08] px-3 py-1 backdrop-blur">
                       Jantar
                     </span>
@@ -169,7 +169,7 @@ const ReservationSection = ({
 
             {step === 1 ? (
               <>
-                <h3 className="mb-6 text-center text-xl font-semibold">
+                <h3 className="mb-6 pr-12 text-center text-xl font-semibold sm:pr-0">
                   Selecione data e horário
                 </h3>
                 <DateTimePicker

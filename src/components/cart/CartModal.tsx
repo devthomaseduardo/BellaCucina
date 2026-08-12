@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { useCart, CartItem } from "./CartContext";
 import {
   Dialog,
@@ -11,11 +12,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Minus, Plus, Trash2, X, Edit, User } from "lucide-react";
+import { CheckCircle2, Minus, Plus, ReceiptText, Trash2, X, Edit, User } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
-import QrCode from "@/components/ui/QrCode";
-import { encodeOrderApprovalQr } from "@/lib/order-qr";
 
 interface CartModalProps {
   open: boolean;
@@ -28,6 +27,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
     updateQuantity,
     removeItem,
     totalPrice,
+    totalItems,
     clearCart,
     updateNotes,
     tableNumber,
@@ -46,6 +46,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
   );
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleUpdateNotes = (id: string) => {
     updateNotes(id, itemNotes);
@@ -58,6 +59,8 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
   };
 
   const handleCheckout = async () => {
+    if (isSubmitting) return;
+
     if (!localTableNumber) {
       setSuccessMessage("Por favor, informe o número da sua mesa.");
       setShowSuccessToast(true);
@@ -82,20 +85,21 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
       setCustomerName(localCustomerName);
     }
 
-    // Show success message
-    setOrderSuccess(true);
+    setIsSubmitting(true);
+    try {
+      const orderId = await addOrder({
+        tableNumber: localTableNumber,
+        customerName: localCustomerName,
+        items: items,
+        status: "pending",
+        totalPrice: totalPrice,
+      });
 
-    // Create a new order in the system
-    const orderId = await addOrder({
-      tableNumber: localTableNumber,
-      customerName: localCustomerName,
-      items: items,
-      status: "pending",
-      totalPrice: totalPrice,
-    });
-    setCreatedOrderId(orderId);
-
-    // Mantemos o carrinho aberto para exibir o QR do pedido ao garçom.
+      setCreatedOrderId(orderId);
+      setOrderSuccess(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -104,49 +108,23 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
         <DialogContent className="flex max-h-[90vh] flex-col border-white/10 bg-background/95 shadow-[0_24px_90px_-48px_rgba(0,0,0,0.95)] backdrop-blur-xl sm:max-w-[540px]">
           {orderSuccess ? (
             <div className="py-12 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                <svg
-                  className="h-8 w-8 text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <CheckCircle2 className="h-8 w-8" aria-hidden />
               </div>
               <h2 className="text-2xl font-bold text-foreground mb-2">
-                Pedido pronto para aprovação
+                Pedido enviado para o caixa
               </h2>
               <p className="text-muted-foreground mb-6">
-                Mostre o QR Code abaixo para o garçom escanear e registrar no
-                sistema.
+                A comanda entrou como pendente no painel administrativo para a equipe acompanhar produção, mesa e fechamento.
               </p>
 
               {createdOrderId ? (
                 <div className="flex flex-col items-center gap-4">
-                  <QrCode
-                    value={encodeOrderApprovalQr({
-                      v: 2,
-                      type: "order-approval",
-                      order: {
-                        id: createdOrderId,
-                        tableNumber: localTableNumber,
-                        customerName: localCustomerName,
-                        items: items,
-                        totalPrice: totalPrice,
-                        createdAt: new Date().toISOString(),
-                      },
-                    })}
-                    className="text-foreground"
-                  />
-                  <div className="w-full max-w-[420px] rounded-xl border border-white/10 bg-white/[0.045] p-4 text-left">
-                    <p className="font-medium">Resumo</p>
+                  <div className="w-full max-w-[420px] rounded-2xl border border-white/10 bg-white/[0.045] p-4 text-left">
+                    <div className="flex items-center gap-2 font-medium">
+                      <ReceiptText className="h-4 w-4 text-primary" aria-hidden />
+                      Pedido #{createdOrderId}
+                    </div>
                     <p className="text-sm text-muted-foreground mt-1">
                       Mesa: {localTableNumber}
                     </p>
@@ -157,7 +135,10 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                       Total: R$ {totalPrice.toFixed(2)}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Itens: {items.length}
+                      Itens: {totalItems}
+                    </p>
+                    <p className="mt-3 w-fit rounded-full border border-amber-400/25 bg-amber-400/10 px-3 py-1 text-xs font-semibold text-amber-100">
+                      Status: pendente no caixa
                     </p>
                   </div>
 
@@ -171,24 +152,20 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                         onOpenChange(false);
                       }}
                     >
-                      Fechar
+                      Continuar no cardápio
                     </Button>
                     <Button
                       variant="outline"
                       className="w-full rounded-full border-white/10 bg-white/[0.04] hover:bg-white/[0.08]"
-                      onClick={() => {
-                        setSuccessMessage("QR Code pronto para o garçom.");
-                        setShowSuccessToast(true);
-                        setTimeout(() => setShowSuccessToast(false), 2500);
-                      }}
+                      asChild
                     >
-                      Enviar confirmação
+                      <Link to="/admin">Abrir painel do caixa</Link>
                     </Button>
                   </div>
                 </div>
               ) : (
                 <div className="text-sm text-muted-foreground">
-                  Gerando QR Code...
+                  Registrando pedido...
                 </div>
               )}
             </div>
@@ -390,8 +367,9 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                       <Button
                         onClick={handleCheckout}
                         className="w-full rounded-full"
+                        disabled={isSubmitting}
                       >
-                        Finalizar Pedido
+                        {isSubmitting ? "Enviando pedido..." : "Enviar pedido ao caixa"}
                       </Button>
                       <Button
                         variant="outline"

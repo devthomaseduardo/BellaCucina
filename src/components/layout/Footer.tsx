@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 interface FooterProps {
   restaurantName?: string;
@@ -53,44 +54,44 @@ const Footer = ({
             <h3 className="mb-4 text-lg font-semibold text-zinc-50">Navegação</h3>
             <ul className="space-y-2">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/menu"
                   className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 >
                   Início
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#menu"
+                <Link
+                  to="/cardapio"
                   className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 >
                   Cardápio
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#reservations"
+                <Link
+                  to="/menu#reservations"
                   className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 >
                   Reservas
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#about"
+                <Link
+                  to="/menu#about"
                   className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 >
                   Sobre
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#contact"
+                <Link
+                  to="/menu#contact"
                   className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                 >
                   Contato
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

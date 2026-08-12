@@ -24,7 +24,7 @@ const LanguageSelectPage = () => {
 
   const pick = (lang: SupportedLanguage) => {
     setLanguage(lang);
-    navigate("/menu#menu", { replace: true });
+    navigate("/menu", { replace: true });
   };
 
   return (

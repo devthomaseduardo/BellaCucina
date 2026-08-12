@@ -140,7 +140,7 @@ const HeroSection = ({
               <h2 className="mt-4 font-display text-4xl leading-[0.95] text-white md:text-5xl">
                 {title}
               </h2>
-              <p className="mt-5 text-sm leading-relaxed text-white/62">
+              <p className="mt-5 pr-14 text-sm leading-relaxed text-white/62 sm:pr-0">
                 Uma vitrine de restaurante com cara de filme: prato, mesa, reserva e pedido digital aparecendo como frames de uma noite.
               </p>
             </div>
@@ -151,7 +151,7 @@ const HeroSection = ({
                   <span className="font-semibold uppercase tracking-[0.16em] text-white/42">
                     {code}
                   </span>
-                  <span className="text-right text-white/78">{label}</span>
+                  <span className="text-right text-white/[0.78]">{label}</span>
                 </div>
               ))}
             </div>

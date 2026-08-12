@@ -3,6 +3,7 @@ import { useI18n } from "@/i18n/I18nProvider";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const cards = [
   {
@@ -31,10 +32,7 @@ const cards = [
 export function MenuExperiences() {
   const { t } = useI18n();
   const shouldReduceMotion = useReducedMotion();
-
-  const scrollToMenu = () => {
-    document.getElementById("menu")?.scrollIntoView({ behavior: "smooth" });
-  };
+  const navigate = useNavigate();
 
   return (
     <section
@@ -66,7 +64,7 @@ export function MenuExperiences() {
               <motion.button
               key={c.key}
               type="button"
-              onClick={scrollToMenu}
+              onClick={() => navigate("/cardapio")}
                 initial={shouldReduceMotion ? false : { opacity: 1, y: 24 }}
                 whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
@@ -107,7 +105,7 @@ export function MenuExperiences() {
                     <h3 className="font-display text-2xl leading-tight text-white transition-colors group-hover:text-[hsl(var(--accent))] sm:text-3xl">
                   {t(`experiences.cards.${c.key}.title`)}
                 </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-white/78 transition-colors group-hover:text-white/92">
+                    <p className="mt-3 text-sm leading-relaxed text-white/[0.78] transition-colors group-hover:text-white/[0.92]">
                   {t(`experiences.cards.${c.key}.body`)}
                 </p>
                     <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors group-hover:text-[hsl(var(--accent))]">

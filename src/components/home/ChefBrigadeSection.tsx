@@ -33,9 +33,9 @@ export function ChefBrigadeSection() {
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/86 via-black/30 to-transparent p-6 pt-28 text-white">
                 <p className="text-xs uppercase tracking-[0.24em] text-white/68">
-                  {t("chef.role")}
+                  {t("chef.kicker")}
                 </p>
-                <p className="mt-1 font-display text-3xl">{t("chef.name")}</p>
+                <p className="mt-1 font-display text-3xl">{t("chef.role")}</p>
               </div>
             </div>
 
@@ -85,12 +85,6 @@ export function ChefBrigadeSection() {
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045]">
-                <img
-                  src={KITCHEN_IMG}
-                  alt={t("chef.imageKitchenAlt")}
-                  className="aspect-video w-full object-cover md:hidden"
-                  loading="lazy"
-                />
                 <img
                   src={BRIGADE_IMG}
                   alt={t("chef.imageBrigadeAlt")}

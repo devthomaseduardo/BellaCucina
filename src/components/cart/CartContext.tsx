@@ -67,54 +67,60 @@ const generateOrderId = () => {
   return Math.floor(1000 + Math.random() * 9000).toString();
 };
 
+const hasSupabaseConfig = Boolean(
+  import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY,
+);
+
+const isUuid = (value: string) =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+
+const readLocalStorage = (key: string) => {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(key);
+};
+
+const readStoredCart = () => {
+  const savedCart = readLocalStorage("cart");
+  if (!savedCart) return [];
+
+  try {
+    return JSON.parse(savedCart) as CartItem[];
+  } catch (error) {
+    console.error("Failed to parse cart from localStorage", error);
+    return [];
+  }
+};
+
+const readStoredOrders = () => {
+  const savedOrders = readLocalStorage("orders");
+  if (!savedOrders) return [];
+
+  try {
+    return JSON.parse(savedOrders, (key, value) => {
+      if (key === "createdAt" || key === "updatedAt") {
+        return new Date(value);
+      }
+      return value;
+    }) as Order[];
+  } catch (error) {
+    console.error("Failed to parse orders from localStorage", error);
+    return [];
+  }
+};
+
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [items, setItems] = React.useState<CartItem[]>([]);
-  const [tableNumber, setTableNumber] = React.useState<string | null>(null);
-  const [customerName, setCustomerName] = React.useState<string | null>(null);
+  const [items, setItems] = React.useState<CartItem[]>(readStoredCart);
+  const [tableNumber, setTableNumber] = React.useState<string | null>(() =>
+    readLocalStorage("tableNumber"),
+  );
+  const [customerName, setCustomerName] = React.useState<string | null>(() =>
+    readLocalStorage("customerName"),
+  );
   const [showSuccessToast, setShowSuccessToast] = React.useState<boolean>(false);
   const [successMessage, setSuccessMessage] = React.useState<string>("");
-  const [orders, setOrders] = React.useState<Order[]>([]);
-
-  // Load cart and orders from localStorage on initial render
-  React.useEffect(() => {
-    const savedCart = localStorage.getItem("cart");
-    const savedTable = localStorage.getItem("tableNumber");
-    const savedName = localStorage.getItem("customerName");
-    const savedOrders = localStorage.getItem("orders");
-
-    if (savedCart) {
-      try {
-        setItems(JSON.parse(savedCart));
-      } catch (error) {
-        console.error("Failed to parse cart from localStorage", error);
-      }
-    }
-
-    if (savedTable) {
-      setTableNumber(savedTable);
-    }
-
-    if (savedName) {
-      setCustomerName(savedName);
-    }
-
-    if (savedOrders) {
-      try {
-        // Parse dates back to Date objects
-        const parsedOrders = JSON.parse(savedOrders, (key, value) => {
-          if (key === "createdAt" || key === "updatedAt") {
-            return new Date(value);
-          }
-          return value;
-        });
-        setOrders(parsedOrders);
-      } catch (error) {
-        console.error("Failed to parse orders from localStorage", error);
-      }
-    }
-  }, []);
+  const [orders, setOrders] = React.useState<Order[]>(readStoredOrders);
 
   // Save cart to localStorage whenever it changes
   React.useEffect(() => {
@@ -222,6 +228,22 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   const addOrder = async (
     orderData: Omit<Order, "id" | "createdAt" | "updatedAt">,
   ) => {
+    const createLocalOrder = (id = generateOrderId()) => {
+      const now = new Date();
+      const fallbackOrder: Order = {
+        ...orderData,
+        id,
+        createdAt: now,
+        updatedAt: now,
+      };
+      setOrders((prevOrders) => [...prevOrders, fallbackOrder]);
+      return fallbackOrder.id;
+    };
+
+    if (!hasSupabaseConfig) {
+      return createLocalOrder();
+    }
+
     try {
       const { data: orderResult, error: orderError } = await supabase
         .from('orders')
@@ -241,7 +263,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
       // Insert items
       const itemsToInsert = orderData.items.map(item => ({
         order_id: orderId,
-        menu_item_id: item.id, // we might need to be careful if it's not a real UUID, but we assume it is now since we load from Supabase
+        menu_item_id: isUuid(item.id) ? item.id : null,
         name: item.name,
         price: item.price,
         quantity: item.quantity,
@@ -269,40 +291,41 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
       return orderId;
     } catch (error) {
       console.error("Failed to add order", error);
-      // fallback to local if Supabase fails (for demo purposes)
-      const now = new Date();
-      const fallbackOrder: Order = {
-        ...orderData,
-        id: generateOrderId(),
-        createdAt: now,
-        updatedAt: now,
-      };
-      setOrders((prevOrders) => [...prevOrders, fallbackOrder]);
-      return fallbackOrder.id;
+      return createLocalOrder();
     }
   };
 
   const importOrder = (order: Order) => {
     setOrders((prevOrders) => {
-      if (prevOrders.some((o) => o.id === order.id)) return prevOrders;
+      if (prevOrders.some((o) => o.id === order.id)) {
+        return prevOrders.map((existing) =>
+          existing.id === order.id ? order : existing,
+        );
+      }
       return [...prevOrders, order];
     });
   };
 
   const updateOrderStatus = async (orderId: string, status: Order["status"]) => {
+    const updatedAt = new Date();
+
+    setOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order.id === orderId
+          ? { ...order, status, updatedAt }
+          : order,
+      ),
+    );
+
+    if (!hasSupabaseConfig) {
+      return;
+    }
+
     try {
       await supabase
         .from('orders')
-        .update({ status, updated_at: new Date().toISOString() })
+        .update({ status, updated_at: updatedAt.toISOString() })
         .eq('id', orderId);
-        
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order.id === orderId
-            ? { ...order, status, updatedAt: new Date() }
-            : order,
-        ),
-      );
     } catch (e) {
       console.error("Failed to update status", e);
     }

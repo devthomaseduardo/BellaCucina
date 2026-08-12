@@ -5,7 +5,6 @@ import GalleryStrip from "./home/GalleryStrip";
 import FeaturedItems from "./home/FeaturedItems";
 import MenuExperiences from "./home/MenuExperiences";
 import ChefBrigadeSection from "./home/ChefBrigadeSection";
-import MenuSection from "./menu/MenuSection";
 import ReservationSection from "./reservation/ReservationSection";
 import Footer from "./layout/Footer";
 
@@ -15,12 +14,24 @@ import FloatingActions from "./layout/FloatingActions";
 import { useI18n } from "@/i18n/I18nProvider";
 import { StickySiteNav } from "@/components/layout/StickySiteNav";
 import { motion, useReducedMotion } from "framer-motion";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const HomePageContent = () => {
   const restaurantName = "Bella Cucina";
   const { showSuccessToast, setShowSuccessToast, successMessage } = useCart();
   const { t } = useI18n();
   const shouldReduceMotion = useReducedMotion();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  React.useEffect(() => {
+    if (!location.hash) return;
+
+    const targetId = location.hash.slice(1);
+    window.setTimeout(() => {
+      document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+    }, 80);
+  }, [location.hash]);
 
   return (
     <div className="min-h-screen w-full min-w-0 overflow-x-hidden bg-background">
@@ -42,11 +53,7 @@ const HomePageContent = () => {
           backgroundImage="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&q=85"
           ctaText={t("hero.ctaMenu")}
           secondaryCtaText={t("hero.ctaReserve")}
-          onCtaClick={() =>
-            document
-              .getElementById("menu")
-              ?.scrollIntoView({ behavior: "smooth" })
-          }
+          onCtaClick={() => navigate("/cardapio")}
           onSecondaryCtaClick={() =>
             document
               .getElementById("reservations")
@@ -62,14 +69,6 @@ const HomePageContent = () => {
         />
 
         <MenuExperiences />
-
-        <section id="menu">
-          <MenuSection
-            title={t("menu.sectionTitle")}
-            description={t("menu.sectionDescription")}
-            showQrCode={true}
-          />
-        </section>
 
         <ReservationSection
           restaurantName={restaurantName}
@@ -228,7 +227,7 @@ const HomePageContent = () => {
                 transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
                 className="overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.045] shadow-[0_24px_90px_-56px_rgba(0,0,0,0.9)] lg:col-span-7"
               >
-                <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+                <div className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4 pr-20 sm:pr-5">
                   <div>
                     <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
                       Localização

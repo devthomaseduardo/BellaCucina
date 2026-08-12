@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Menu } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -13,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 const SECTION_LINKS = [
   { href: "#", key: "home" as const },
-  { href: "#menu", key: "menu" as const },
+  { href: "/cardapio", key: "menu" as const },
   { href: "#reservations", key: "reservations" as const },
   { href: "#about", key: "about" as const },
   { href: "#contact", key: "contact" as const },
@@ -38,11 +39,24 @@ const desktopLinkClass = cn(
 export function StickySiteNav() {
   const { t } = useI18n();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const go = useCallback((href: string) => {
     setMobileOpen(false);
+    if (href.startsWith("/")) {
+      navigate(href);
+      return;
+    }
+
+    if (location.pathname !== "/menu") {
+      navigate(`/menu${href === "#" ? "" : href}`);
+      window.setTimeout(() => scrollToSection(href), 80);
+      return;
+    }
+
     scrollToSection(href);
-  }, []);
+  }, [location.pathname, navigate]);
 
   return (
     <div
@@ -122,7 +136,7 @@ export function StickySiteNav() {
           >
             <button
               type="button"
-              onClick={() => scrollToSection("#")}
+              onClick={() => go("#")}
               className="mr-2 inline-flex shrink-0 items-center rounded-full bg-white/[0.07] px-4 py-2 font-display text-sm font-semibold text-white transition hover:bg-white/[0.1]"
             >
               Bella Cucina
@@ -133,7 +147,7 @@ export function StickySiteNav() {
                 href={link.href}
                 onClick={(e) => {
                   e.preventDefault();
-                  scrollToSection(link.href);
+                  go(link.href);
                 }}
                 className={desktopLinkClass}
               >

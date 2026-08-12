@@ -1,171 +1,89 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import CartButton from "@/components/cart/CartButton";
+import React, { useState } from "react";
+import CartModal from "@/components/cart/CartModal";
+import { useCart } from "@/components/cart/CartContext";
 import WaiterButton from "@/components/waiter/WaiterButton";
 import { cn } from "@/lib/utils";
-import { ClocheIcon } from "@/components/icons/fine-dining";
 
 type FloatingActionsProps = {
   className?: string;
-  whatsappHref?: string;
   showWaiterAction?: boolean;
 };
 
+const formatPrice = (value: number) =>
+  new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    maximumFractionDigits: 0,
+  }).format(value);
+
 const FloatingActions = ({
   className,
-  whatsappHref = "https://wa.me/5500000000000",
   showWaiterAction = false,
 }: FloatingActionsProps) => {
-  const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (!open) return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    const onPointerDown = (e: PointerEvent) => {
-      const el = rootRef.current;
-      if (!el) return;
-      if (!el.contains(e.target as Node)) setOpen(false);
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("pointerdown", onPointerDown);
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("pointerdown", onPointerDown);
-    };
-  }, [open]);
-
-  const actions = useMemo(
-    () => {
-      const base = [
-        {
-          key: "cart",
-          label: "Carrinho",
-          node: (
-            <CartButton
-              variant="default"
-              size="icon"
-              className={cn(
-                "h-11 w-11 rounded-xl shadow-sm",
-                "bg-primary text-primary-foreground hover:bg-primary/90",
-                "border border-white/10",
-              )}
-            />
-          ),
-        },
-      ] as const;
-
-      const waiter = showWaiterAction
-        ? ([
-            {
-              key: "waiter",
-              label: "Garçom",
-              node: (
-                <WaiterButton
-                  variant="secondary"
-                  size="icon"
-                  className={cn(
-                    "h-11 w-11 rounded-xl shadow-sm",
-                    "border border-white/10 bg-white/[0.06] hover:bg-white/[0.1]",
-                    "text-foreground",
-                  )}
-                />
-              ),
-            },
-          ] as const)
-        : ([] as const);
-
-      const whatsapp = [
-        {
-          key: "whatsapp",
-          label: "WhatsApp",
-          node: (
-            <a
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Falar no WhatsApp"
-              className={cn(
-                "grid place-items-center h-11 w-11 rounded-xl",
-                "border border-white/10 bg-white/[0.08] text-primary shadow-sm",
-                "transition-all hover:-translate-y-0.5 hover:bg-white/[0.14] hover:shadow-md",
-                "ring-1 ring-white/15",
-              )}
-            >
-              <span className="text-[15px] font-semibold tracking-tight">
-                WA
-              </span>
-            </a>
-          ),
-        },
-      ] as const;
-
-      return [...base, ...waiter, ...whatsapp];
-    },
-    [showWaiterAction, whatsappHref],
-  );
+  const [cartOpen, setCartOpen] = useState(false);
+  const { totalItems, totalPrice } = useCart();
+  const itemLabel = totalItems === 1 ? "1 item" : `${totalItems} itens`;
 
   return (
-    <div
-      ref={rootRef}
-      className={cn(
-        "fixed z-50 flex flex-col items-end gap-3",
-        "bottom-[max(1.25rem,env(safe-area-inset-bottom,0px))] right-[max(1.25rem,env(safe-area-inset-right,0px))] sm:bottom-6 sm:right-6",
-        className,
-      )}
-    >
-      {/* Menu expandido */}
+    <>
       <div
         className={cn(
-          "flex flex-col items-end gap-2",
-          "transition-all duration-200",
-          open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
+          "fixed z-50 flex flex-col items-end gap-2",
+          "bottom-[max(0.875rem,env(safe-area-inset-bottom,0px))] right-[max(0.875rem,env(safe-area-inset-right,0px))] sm:bottom-6 sm:right-6",
+          className,
         )}
       >
-        {actions.map((a, idx) => (
-          <div
-            key={a.key}
+        <button
+          type="button"
+          onClick={() => setCartOpen(true)}
+          className={cn(
+            "group relative flex h-9 w-9 items-center justify-center gap-2 rounded-full sm:h-11 sm:w-auto sm:min-w-[9.5rem] sm:justify-start sm:px-3.5",
+            "transition-all hover:-translate-y-0.5 active:translate-y-0",
+            totalItems > 0
+              ? "border border-primary/30 bg-primary text-primary-foreground shadow-[0_18px_60px_-24px_hsl(var(--primary))] hover:bg-primary/90"
+              : "border border-white/10 bg-black/[0.68] text-white shadow-xl backdrop-blur-xl hover:bg-white/[0.12]",
+          )}
+          aria-label="Abrir pedido"
+        >
+          <span
             className={cn(
-              "flex items-center gap-3",
-              "transition-all duration-200 ease-out",
-              open
-                ? "translate-y-0"
-                : "translate-y-2",
+              "grid h-7 w-7 shrink-0 place-items-center rounded-full font-display text-sm sm:h-8 sm:w-8",
+              totalItems > 0 ? "bg-black/[0.16]" : "bg-white/[0.08] text-primary",
             )}
-            style={{ transitionDelay: open ? `${idx * 35}ms` : "0ms" }}
           >
-            <div
-              className={cn(
-                "px-3 py-1.5 rounded-full text-xs",
-                "border border-white/10 bg-black/55 text-white shadow-sm backdrop-blur-xl",
-              )}
-            >
-              {a.label}
-            </div>
-            {a.node}
-          </div>
-        ))}
+            P
+          </span>
+          <span className="hidden min-w-0 text-left sm:block">
+            <span className="block text-[10px] font-semibold uppercase tracking-[0.18em] opacity-75">
+              Pedido
+            </span>
+            <span className="block truncate text-sm font-semibold leading-tight">
+              {totalItems > 0 ? itemLabel : "Abrir comanda"}
+            </span>
+          </span>
+          {totalItems > 0 && (
+            <>
+              <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-black px-1 text-[10px] font-bold sm:hidden">
+                {totalItems}
+              </span>
+              <span className="ml-auto hidden shrink-0 rounded-full bg-black/[0.16] px-2.5 py-1 text-xs font-semibold sm:inline-flex">
+                {formatPrice(totalPrice)}
+              </span>
+            </>
+          )}
+        </button>
+
+        {showWaiterAction && (
+          <WaiterButton
+            variant="secondary"
+            size="icon"
+            className="h-10 w-10 rounded-full border border-white/10 bg-black/[0.68] text-foreground shadow-xl backdrop-blur-xl hover:bg-white/[0.12]"
+          />
+        )}
       </div>
 
-      {/* Botão principal */}
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-label={open ? "Fechar ações" : "Abrir ações"}
-        className={cn(
-          "relative grid place-items-center h-14 w-14 rounded-full",
-          "border border-white/10 bg-primary text-primary-foreground shadow-xl backdrop-blur-xl",
-          "transition-all hover:-translate-y-0.5 hover:shadow-2xl active:translate-y-0",
-        )}
-      >
-        <span className="absolute inset-0 rounded-full ring-1 ring-white/10" />
-        <ClocheIcon className={cn("h-6 w-6 transition-transform", open && "rotate-[-8deg]")} />
-      </button>
-    </div>
+      <CartModal open={cartOpen} onOpenChange={setCartOpen} />
+    </>
   );
 };
 
