@@ -4,6 +4,7 @@ import AddToCartModal from "./AddToCartModal";
 import { useI18n } from "@/i18n/I18nProvider";
 import { motion } from "framer-motion";
 import { Plus } from "lucide-react";
+import { getMenuItemDetails } from "@/data/menu-item-details";
 
 interface MenuItemProps {
   id: string;
@@ -35,6 +36,7 @@ const MenuItem = ({
 
   const rating = React.useMemo(() => initialRating ?? getStableRating(id), [id, initialRating]);
   const categoryLabel = t(`menu.category.${category}`);
+  const details = getMenuItemDetails(id);
 
   return (
     <>
@@ -86,9 +88,30 @@ const MenuItem = ({
               {description}
             </p>
 
+            {(details.allergens.length > 0 || details.dietary?.length) && (
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {details.dietary?.slice(0, 1).map((label) => (
+                  <span
+                    key={label}
+                    className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.08em] text-emerald-100"
+                  >
+                    {label}
+                  </span>
+                ))}
+                {details.allergens.slice(0, 2).map((allergen) => (
+                  <span
+                    key={allergen}
+                    className="rounded-full border border-amber-400/20 bg-amber-400/10 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.08em] text-amber-100"
+                  >
+                    Contém {allergen}
+                  </span>
+                ))}
+              </div>
+            )}
+
             <div className="mt-5 flex items-center justify-between gap-3">
               <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                {t("menu.detailsHint")}
+                Ingredientes e detalhes
               </span>
               <Button
                 size="sm"
