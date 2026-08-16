@@ -17,18 +17,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Informe um nome com pelo menos 2 caracteres.",
-  }),
-  email: z.string().email({
-    message: "Informe um e-mail válido.",
-  }),
-  phone: z.string().min(10, {
-    message: "Informe um telefone válido.",
-  }),
-  partySize: z.string().min(1, {
-    message: "Informe o número de pessoas.",
-  }),
+  name: z.string().min(2, { message: "Informe um nome com pelo menos 2 caracteres." }),
+  email: z.string().email({ message: "Informe um e-mail válido." }),
+  phone: z.string().min(10, { message: "Informe um telefone válido." }),
+  partySize: z.string().min(1, { message: "Informe o número de pessoas." }),
   specialRequests: z.string().optional(),
 });
 
@@ -40,10 +32,13 @@ interface ReservationFormProps {
   selectedTime?: string;
 }
 
+const fieldClass =
+  "h-11 rounded-none border-0 border-b border-white/12 bg-transparent px-0 text-foreground shadow-none focus-visible:border-primary focus-visible:ring-0";
+
 const ReservationForm = ({
   onSubmit,
   selectedDate = new Date(),
-  selectedTime = "7:00 PM",
+  selectedTime = "19:00",
 }: ReservationFormProps) => {
   const form = useForm<ReservationFormValues>({
     resolver: zodResolver(formSchema),
@@ -56,107 +51,82 @@ const ReservationForm = ({
     },
   });
 
-  const handleSubmit = (values: ReservationFormValues) => {
-    onSubmit?.(values);
-  };
-
   return (
-    <div className="mx-auto w-full max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-4 sm:p-5">
-      <h3 className="mb-4 text-center text-xl font-semibold">
-        Complete sua reserva
-      </h3>
-
+    <div className="w-full">
       {selectedDate && selectedTime && (
-        <div className="mb-6 rounded-2xl border border-primary/20 bg-primary/10 p-3 text-center">
-          <p className="text-sm font-medium text-primary">Data e horário escolhidos:</p>
-          <p className="text-base">
+        <div className="mb-7 border-y border-white/10 py-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">Horário escolhido</p>
+          <p className="mt-2 text-sm font-medium text-foreground">
             {selectedDate.toLocaleDateString("pt-BR", {
               weekday: "long",
-              year: "numeric",
-              month: "long",
               day: "numeric",
-            })}
-            , {selectedTime}
+              month: "long",
+            })} às {selectedTime}
           </p>
         </div>
       )}
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="partySize"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Número de pessoas</FormLabel>
-                <FormControl>
-                    <Input
-                      placeholder="2"
-                      {...field}
-                      type="number"
-                      min="1"
-                      className="rounded-full border-white/10 bg-white/[0.04]"
-                    />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <form onSubmit={form.handleSubmit((values) => onSubmit?.(values))} className="space-y-5">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome completo</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Seu nome" {...field} className={fieldClass} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nome completo</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Seu nome"
-                    {...field}
-                    className="rounded-full border-white/10 bg-white/[0.04]"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="partySize"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Número de pessoas</FormLabel>
+                  <FormControl>
+                    <Input placeholder="2" {...field} type="number" min="1" max="20" className={fieldClass} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Telefone</FormLabel>
-                <FormControl>
-                    <Input
-                      placeholder="(11) 99999-9999"
-                      {...field}
-                      className="rounded-full border-white/10 bg-white/[0.04]"
-                    />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid gap-5 sm:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="(11) 99999-9999" {...field} inputMode="tel" className={fieldClass} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                    <Input
-                      placeholder="seu@email.com"
-                      {...field}
-                      type="email"
-                      className="rounded-full border-white/10 bg-white/[0.04]"
-                    />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="seu@email.com" {...field} type="email" className={fieldClass} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <FormField
             control={form.control}
@@ -165,22 +135,20 @@ const ReservationForm = ({
               <FormItem>
                 <FormLabel>Observações</FormLabel>
                 <FormControl>
-                    <Textarea
-                      placeholder="Restrições alimentares, ocasião especial ou preferência de mesa."
-                      className="min-h-[96px] resize-none rounded-2xl border-white/10 bg-white/[0.04]"
-                      {...field}
-                    />
+                  <Textarea
+                    placeholder="Restrições alimentares, ocasião especial ou preferência de mesa."
+                    className="min-h-[110px] resize-none rounded-none border-0 border-b border-white/12 bg-transparent px-0 shadow-none focus-visible:border-primary focus-visible:ring-0"
+                    {...field}
+                  />
                 </FormControl>
-                <FormDescription>
-                  A equipe confirma os detalhes no atendimento.
-                </FormDescription>
+                <FormDescription>A equipe confirma disponibilidade e detalhes antes da reserva ficar confirmada.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <Button type="submit" className="mt-6 w-full rounded-full">
-            Confirmar reserva
+          <Button type="submit" className="mt-2 w-full rounded-full sm:w-auto sm:px-8">
+            Enviar solicitação
           </Button>
         </form>
       </Form>
