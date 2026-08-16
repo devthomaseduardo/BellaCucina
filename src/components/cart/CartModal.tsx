@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { useCart, CartItem } from "./CartContext";
 import {
   Dialog,
@@ -111,11 +110,11 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <CheckCircle2 className="h-8 w-8" aria-hidden />
               </div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">
-                Pedido enviado para o caixa
+              <h2 className="mb-2 text-2xl font-bold text-foreground">
+                Pedido enviado
               </h2>
-              <p className="text-muted-foreground mb-6">
-                A comanda entrou como pendente no painel administrativo para a equipe acompanhar produção, mesa e fechamento.
+              <p className="mb-6 text-muted-foreground">
+                Seu pedido foi registrado e enviado para a equipe do restaurante.
               </p>
 
               {createdOrderId ? (
@@ -125,7 +124,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                       <ReceiptText className="h-4 w-4 text-primary" aria-hidden />
                       Pedido #{createdOrderId}
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="mt-1 text-sm text-muted-foreground">
                       Mesa: {localTableNumber}
                     </p>
                     <p className="text-sm text-muted-foreground">
@@ -138,30 +137,21 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                       Itens: {totalItems}
                     </p>
                     <p className="mt-3 w-fit rounded-full border border-amber-400/25 bg-amber-400/10 px-3 py-1 text-xs font-semibold text-amber-100">
-                      Status: pendente no caixa
+                      Status: recebido pela equipe
                     </p>
                   </div>
 
-                  <div className="w-full max-w-[420px] flex flex-col sm:flex-row gap-2 justify-center">
-                    <Button
-                      className="w-full rounded-full"
-                      onClick={() => {
-                        clearCart();
-                        setOrderSuccess(false);
-                        setCreatedOrderId(null);
-                        onOpenChange(false);
-                      }}
-                    >
-                      Continuar no cardápio
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full rounded-full border-white/10 bg-white/[0.04] hover:bg-white/[0.08]"
-                      asChild
-                    >
-                      <Link to="/admin">Abrir painel do caixa</Link>
-                    </Button>
-                  </div>
+                  <Button
+                    className="w-full max-w-[420px] rounded-full"
+                    onClick={() => {
+                      clearCart();
+                      setOrderSuccess(false);
+                      setCreatedOrderId(null);
+                      onOpenChange(false);
+                    }}
+                  >
+                    Continuar no cardápio
+                  </Button>
                 </div>
               ) : (
                 <div className="text-sm text-muted-foreground">
@@ -195,7 +185,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                       />
                     </svg>
                   </div>
-                  <p className="text-muted-foreground mb-4">
+                  <p className="mb-4 text-muted-foreground">
                     Seu carrinho está vazio.
                   </p>
                   <Button
@@ -208,7 +198,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                       <Label
                         htmlFor="tableNumber"
@@ -244,7 +234,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                     </div>
                   </div>
 
-                  <ScrollArea className="flex-1 pr-4 max-h-[40vh]">
+                  <ScrollArea className="max-h-[40vh] flex-1 pr-4">
                     <div className="space-y-4">
                       {items.map((item) => (
                         <div key={item.id} className="flex border-b border-white/10 pb-4">
@@ -266,7 +256,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                                 <Trash2 className="h-4 w-4 text-destructive" />
                               </Button>
                             </div>
-                            <div className="flex items-center gap-2 mb-1">
+                            <div className="mb-1 flex items-center gap-2">
                               <p className="text-sm text-muted-foreground">
                                 R$ {item.price.toFixed(2)}
                               </p>
@@ -285,13 +275,13 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                                   placeholder="Observações (ex: sem cebola)"
                                   className="h-20 rounded-2xl border-white/10 bg-white/[0.04] text-sm"
                                 />
-                                <div className="flex justify-end mt-1 space-x-2">
+                                <div className="mt-1 flex justify-end space-x-2">
                                   <Button
                                     variant="ghost"
                                     size="sm"
                                     onClick={() => setEditingItemId(null)}
                                   >
-                                    <X className="h-4 w-4 mr-1" /> Cancelar
+                                    <X className="mr-1 h-4 w-4" /> Cancelar
                                   </Button>
                                   <Button
                                     variant="default"
@@ -305,11 +295,11 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                             ) : (
                               <>
                                 {item.notes && (
-                                  <p className="text-xs italic text-muted-foreground mb-2">
+                                  <p className="mb-2 text-xs italic text-muted-foreground">
                                     Obs: {item.notes}
                                   </p>
                                 )}
-                                <div className="flex justify-between items-center">
+                                <div className="flex items-center justify-between">
                                   <div className="flex items-center space-x-2">
                                     <Button
                                       variant="outline"
@@ -347,7 +337,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                                     onClick={() => startEditingNotes(item)}
                                     className="h-7 px-2"
                                   >
-                                    <Edit className="h-3 w-3 mr-1" /> Obs
+                                    <Edit className="mr-1 h-3 w-3" /> Obs
                                   </Button>
                                 </div>
                               </>
@@ -359,17 +349,17 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                   </ScrollArea>
 
                   <div className="mt-4 border-t border-white/10 pt-4">
-                    <div className="flex justify-between font-medium text-lg mb-4">
+                    <div className="mb-4 flex justify-between text-lg font-medium">
                       <span>Total:</span>
                       <span>R$ {totalPrice.toFixed(2)}</span>
                     </div>
-                    <DialogFooter className="flex-col sm:flex-col gap-2">
+                    <DialogFooter className="flex-col gap-2 sm:flex-col">
                       <Button
                         onClick={handleCheckout}
                         className="w-full rounded-full"
                         disabled={isSubmitting}
                       >
-                        {isSubmitting ? "Enviando pedido..." : "Enviar pedido ao caixa"}
+                        {isSubmitting ? "Enviando pedido..." : "Enviar pedido"}
                       </Button>
                       <Button
                         variant="outline"
