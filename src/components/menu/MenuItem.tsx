@@ -1,9 +1,9 @@
 import * as React from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import AddToCartModal from "./AddToCartModal";
 import { useI18n } from "@/i18n/I18nProvider";
 import { motion } from "framer-motion";
+import { Plus } from "lucide-react";
 
 interface MenuItemProps {
   id: string;
@@ -24,7 +24,7 @@ const MenuItem = ({
   id,
   name,
   description,
-  price = 0, // Default value to prevent undefined price
+  price = 0,
   image,
   category,
   rating: initialRating,
@@ -33,76 +33,78 @@ const MenuItem = ({
   const { t } = useI18n();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
-  const rating = React.useMemo(() => initialRating ?? getStableRating(id), [
-    id,
-    initialRating,
-  ]);
-
+  const rating = React.useMemo(() => initialRating ?? getStableRating(id), [id, initialRating]);
   const categoryLabel = t(`menu.category.${category}`);
 
   return (
     <>
-      <motion.div
-        whileHover={{ y: -4 }}
+      <motion.article
+        whileHover={{ y: -3 }}
         transition={{ duration: 0.22, ease: "easeOut" }}
         className={className}
       >
-        <Card
+        <div
           role="button"
           tabIndex={0}
-          className="group flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-[1.35rem] border-white/10 bg-white/[0.045] text-card-foreground shadow-[0_24px_80px_-56px_rgba(0,0,0,0.9)] transition duration-300 hover:border-primary/30 hover:bg-white/[0.065] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+          className="group flex h-full w-full cursor-pointer flex-col overflow-hidden bg-muted/20 text-card-foreground transition duration-300 hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
           onClick={() => setIsModalOpen(true)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
               setIsModalOpen(true);
             }
           }}
         >
-        <div className="relative aspect-[4/3] w-full overflow-hidden">
-          <img
-            src={image}
-            alt={name}
-              className="h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.06]"
-          />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-black/12 to-transparent" />
-            <div className="absolute right-3 top-3 rounded-full border border-white/15 bg-black/35 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
-            {categoryLabel}
-          </div>
-            <div className="absolute bottom-3 left-3 rounded-full border border-white/15 bg-black/45 px-2.5 py-1 text-xs text-white backdrop-blur">
-              <span className="font-semibold tracking-[0.12em] text-[hsl(var(--accent))]">
-                {rating.toFixed(1)}
+          <div className="relative aspect-[4/3] w-full overflow-hidden bg-black">
+            <img
+              src={image}
+              alt={name}
+              loading="lazy"
+              className="h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.035]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-transparent to-black/10" />
+
+            <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
+              <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-white/72">
+                {categoryLabel}
               </span>
+              <span className="font-display text-2xl text-white">R$ {price.toFixed(2)}</span>
+            </div>
           </div>
-            <div className="absolute bottom-3 right-3 rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-xs text-white backdrop-blur-sm">
-            {t("menu.detailsHint")}
+
+          <div className="flex flex-1 flex-col p-5">
+            <div className="flex items-start justify-between gap-4">
+              <h3 className="max-w-[14ch] font-display text-2xl leading-tight text-foreground">
+                {name}
+              </h3>
+              <span className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">
+                {rating.toFixed(1)} / 5
+              </span>
+            </div>
+
+            <p className="mt-3 line-clamp-3 flex-1 text-sm leading-6 text-muted-foreground">
+              {description}
+            </p>
+
+            <div className="mt-5 flex items-center justify-between gap-3">
+              <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                {t("menu.detailsHint")}
+              </span>
+              <Button
+                size="sm"
+                className="h-9 rounded-full px-4 text-xs"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setIsModalOpen(true);
+                }}
+              >
+                <Plus className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+                {t("menu.addToOrder")}
+              </Button>
+            </div>
           </div>
         </div>
-          <CardContent className="flex flex-1 flex-col p-5">
-            <div className="mb-3 flex items-start justify-between gap-3">
-              <h3 className="line-clamp-2 text-lg font-semibold leading-snug text-foreground transition-colors group-hover:text-primary sm:text-xl">
-              {name}
-            </h3>
-              <span className="shrink-0 rounded-full bg-primary/10 px-3 py-1 text-sm font-bold text-primary">
-              R$ {price.toFixed(2)}
-            </span>
-          </div>
-            <p className="mb-5 line-clamp-3 flex-1 text-sm leading-relaxed text-muted-foreground">
-            {description}
-          </p>
-          <Button
-            size="sm"
-              className="mt-auto self-end gap-2 rounded-full px-5"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsModalOpen(true);
-            }}
-          >
-            {t("menu.addToOrder")}
-          </Button>
-        </CardContent>
-      </Card>
-      </motion.div>
+      </motion.article>
 
       <AddToCartModal
         open={isModalOpen}
