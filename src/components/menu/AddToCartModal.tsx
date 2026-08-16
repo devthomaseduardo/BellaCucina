@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Minus, Plus } from "lucide-react";
 import { useCart } from "../cart/CartContext";
 import { useI18n } from "@/i18n/I18nProvider";
+import { getMenuItemDetails } from "@/data/menu-item-details";
 
 interface AddToCartModalProps {
   open: boolean;
@@ -27,11 +28,7 @@ interface AddToCartModalProps {
   };
 }
 
-const AddToCartModal: React.FC<AddToCartModalProps> = ({
-  open,
-  onOpenChange,
-  item,
-}) => {
+const AddToCartModal: React.FC<AddToCartModalProps> = ({ open, onOpenChange, item }) => {
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState("");
   const [itemCustomerName, setItemCustomerName] = useState("");
@@ -39,8 +36,8 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
   const { addItem, customerName } = useCart();
   const { t } = useI18n();
   const categoryLabel = t(`menu.category.${item.category}`);
+  const details = getMenuItemDetails(item.id);
 
-  // Reset state when modal opens
   useEffect(() => {
     if (open) {
       setQuantity(1);
@@ -53,23 +50,15 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
   const handleAddToCart = () => {
     addItem(item, quantity, notes, itemCustomerName);
     setAddedToCart(true);
-
-    // Close modal after showing success animation
-    setTimeout(() => {
-      onOpenChange(false);
-    }, 1500);
+    window.setTimeout(() => onOpenChange(false), 1500);
   };
-
-  const incrementQuantity = () => setQuantity((prev) => prev + 1);
-  const decrementQuantity = () =>
-    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto border-white/10 bg-background/95 shadow-[0_24px_90px_-48px_rgba(0,0,0,0.95)] backdrop-blur-xl sm:max-w-[560px]">
+      <DialogContent className="max-h-[90vh] overflow-y-auto border-white/10 bg-background/95 shadow-[0_24px_90px_-48px_rgba(0,0,0,0.95)] backdrop-blur-xl sm:max-w-[620px]">
         {addedToCart ? (
           <div className="py-8 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 animate-bounce items-center justify-center rounded-full bg-primary/10">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
               <span className="font-display text-2xl text-primary">OK</span>
             </div>
             <h2 className="mb-2 text-xl font-semibold text-foreground">
@@ -83,104 +72,146 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
               <DialogTitle>{t("addToCart.title")}</DialogTitle>
             </DialogHeader>
 
-            <div className="grid gap-4 py-2 sm:py-4">
-              <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
-                <div className="aspect-[16/10] w-full max-h-[min(52vh,16rem)] sm:max-h-[min(48vh,18rem)]">
+            <div className="grid gap-5 py-2 sm:py-4">
+              <div className="overflow-hidden rounded-[1.5rem] bg-muted/20">
+                <div className="aspect-[16/10] w-full max-h-[19rem]">
                   <img
                     src={item.image}
                     alt={item.name}
                     loading="lazy"
-                    className="h-full w-full bg-muted object-contain object-center sm:object-cover"
+                    className="h-full w-full object-cover object-center"
                   />
                 </div>
               </div>
-              <div className="flex flex-col gap-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-lg font-semibold text-foreground sm:text-xl">{item.name}</h3>
-                  <span className="inline-flex rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-                    {categoryLabel}
-                  </span>
-                  <div className="flex items-center text-xs text-muted-foreground">
-                    <span className="font-semibold tracking-[0.12em] text-[hsl(var(--accent))]">
-                      {(item.rating ?? 4.7).toFixed(1)} / 5
+
+              <div>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
+                      {categoryLabel}
                     </span>
+                    <h3 className="mt-1 font-display text-3xl leading-tight text-foreground">
+                      {item.name}
+                    </h3>
                   </div>
+                  <p className="font-display text-2xl text-primary">R$ {item.price.toFixed(2)}</p>
                 </div>
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">{item.description}</p>
-                  <div className="flex flex-wrap gap-2 text-[11px] text-muted-foreground">
-                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-1">
-                      {t("addToCart.tagFresh")}
-                    </span>
-                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-1">
-                      {t("addToCart.tagIngredients")}
-                    </span>
-                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-1">
-                      {t("addToCart.tagCustomizable")}
-                    </span>
-                  </div>
-                </div>
-                <p className="text-lg font-semibold text-primary">
-                  R$ {item.price.toFixed(2)}
-                </p>
+
+                <p className="mt-4 text-sm leading-6 text-muted-foreground">{item.description}</p>
               </div>
 
-              <div className="border-t border-white/10 pt-4">
-                <label className="block text-sm font-medium mb-2">
-                  {t("addToCart.quantity")}
-                </label>
-                <div className="flex items-center space-x-4">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="rounded-full border-white/10 bg-white/[0.04] hover:bg-white/[0.08]"
-                    onClick={decrementQuantity}
-                    disabled={quantity <= 1}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <span className="text-lg font-medium w-8 text-center">
-                    {quantity}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="rounded-full border-white/10 bg-white/[0.04] hover:bg-white/[0.08]"
-                    onClick={incrementQuantity}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
+              {details.ingredients.length > 0 && (
+                <div className="border-t border-white/10 pt-4">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    Ingredientes principais
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {details.ingredients.map((ingredient) => (
+                      <span
+                        key={ingredient}
+                        className="rounded-full bg-white/[0.05] px-3 py-1.5 text-xs text-foreground/80"
+                      >
+                        {ingredient}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {(details.allergens.length > 0 || details.dietary?.length) && (
+                <div className="grid gap-4 border-t border-white/10 pt-4 sm:grid-cols-2">
+                  {details.allergens.length > 0 && (
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-200/80">
+                        Atenção a alergênicos
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {details.allergens.map((allergen) => (
+                          <span
+                            key={allergen}
+                            className="rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1.5 text-xs text-amber-100"
+                          >
+                            {allergen}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {details.dietary?.length ? (
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-200/80">
+                        Perfil do prato
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {details.dietary.map((label) => (
+                          <span
+                            key={label}
+                            className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-xs text-emerald-100"
+                          >
+                            {label}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              )}
+
+              <p className="text-xs leading-5 text-muted-foreground">
+                Em caso de alergia ou restrição alimentar, informe nas observações e confirme com a equipe antes do consumo.
+              </p>
+
+              <div className="grid gap-4 border-t border-white/10 pt-4 sm:grid-cols-[auto_1fr] sm:items-end">
+                <div>
+                  <label className="mb-2 block text-sm font-medium">{t("addToCart.quantity")}</label>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="rounded-full border-white/10 bg-white/[0.04]"
+                      onClick={() => setQuantity((value) => Math.max(1, value - 1))}
+                      disabled={quantity <= 1}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <span className="w-8 text-center text-lg font-medium">{quantity}</span>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="rounded-full border-white/10 bg-white/[0.04]"
+                      onClick={() => setQuantity((value) => value + 1)}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium">Para quem é este prato?</label>
+                  <Input
+                    placeholder="Nome da pessoa"
+                    value={itemCustomerName}
+                    onChange={(event) => setItemCustomerName(event.target.value)}
+                    className="rounded-full border-white/10 bg-white/[0.04]"
+                  />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Nome (Para quem é este prato?)
-                </label>
-                <Input
-                  placeholder="Ex: Thomas, Eduardo..."
-                  value={itemCustomerName}
-                  onChange={(e) => setItemCustomerName(e.target.value)}
-                  className="mb-4 rounded-full border-white/10 bg-white/[0.04]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  {t("addToCart.notes")}
-                </label>
+                <label className="mb-2 block text-sm font-medium">Observações e restrições</label>
                 <Textarea
-                  placeholder={t("addToCart.notesPlaceholder")}
+                  placeholder="Ex.: alergia a castanhas, sem queijo, molho separado"
                   value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
+                  onChange={(event) => setNotes(event.target.value)}
                   className="resize-none rounded-2xl border-white/10 bg-white/[0.04]"
                   rows={3}
                 />
               </div>
 
-              <div className="mt-2 flex items-center justify-between border-t border-white/10 pt-4">
+              <div className="flex items-center justify-between border-t border-white/10 pt-4">
                 <span className="font-medium">{t("addToCart.total")}</span>
-                <span className="text-lg font-semibold text-primary">
+                <span className="font-display text-2xl text-primary">
                   R$ {(item.price * quantity).toFixed(2)}
                 </span>
               </div>
@@ -189,7 +220,7 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({
             <DialogFooter>
               <Button
                 variant="outline"
-                className="rounded-full border-white/10 bg-white/[0.04] hover:bg-white/[0.08]"
+                className="rounded-full border-white/10 bg-white/[0.04]"
                 onClick={() => onOpenChange(false)}
               >
                 {t("addToCart.cancel")}
