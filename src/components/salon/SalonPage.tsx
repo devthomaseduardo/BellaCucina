@@ -1,6 +1,7 @@
 import React from "react";
 import { CheckCircle2, MapPin, UserRound } from "lucide-react";
 
+import TableSessionsPanel from "@/components/salon/TableSessionsPanel";
 import WaiterLogin from "@/components/waiter/Login";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
@@ -93,9 +94,9 @@ function SalonBoard() {
             <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
               Operação
             </p>
-            <h1 className="mt-2 font-display text-4xl sm:text-5xl">Salão</h1>
+            <h2 className="mt-2 font-display text-4xl sm:text-5xl">Salão</h2>
             <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-              Aqui aparecem somente os pratos prontos. A equipe já recebe mesa e nome de quem pediu antes de sair da cozinha.
+              Aqui aparecem somente os pratos prontos. A equipe recebe mesa e nome de quem pediu antes de sair da cozinha.
             </p>
           </div>
           <span className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
@@ -104,69 +105,80 @@ function SalonBoard() {
           </span>
         </header>
 
-        {items.length === 0 ? (
-          <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-10 text-center text-muted-foreground">
-            Nenhum prato aguardando retirada.
+        <TableSessionsPanel />
+
+        <section>
+          <div className="mb-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
+              Saída da cozinha
+            </p>
+            <h3 className="mt-1 font-display text-2xl">Prontos para levar</h3>
           </div>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {items.map((item) => (
-              <article
-                key={item.id}
-                className="overflow-hidden rounded-3xl border border-emerald-300/20 bg-emerald-300/[0.06] p-5"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-200">
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                    Pronto
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(item.created_at).toLocaleTimeString("pt-BR", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
 
-                <h2 className="mt-5 font-display text-3xl leading-tight">
-                  {item.quantity}x {item.name}
-                </h2>
-
-                <div className="mt-5 grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl bg-black/20 p-4">
-                    <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-                      <MapPin className="h-3.5 w-3.5" /> Mesa
-                    </p>
-                    <p className="mt-1 text-2xl font-semibold">
-                      {item.orders?.table_number ?? "?"}
-                    </p>
-                  </div>
-                  <div className="rounded-2xl bg-black/20 p-4">
-                    <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-                      <UserRound className="h-3.5 w-3.5" /> Pessoa
-                    </p>
-                    <p className="mt-1 truncate text-lg font-semibold">
-                      {item.customer_name || item.orders?.customer_name || "Mesa"}
-                    </p>
-                  </div>
-                </div>
-
-                {item.notes && (
-                  <p className="mt-3 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-3 text-sm text-amber-100">
-                    Observação: {item.notes}
-                  </p>
-                )}
-
-                <Button
-                  className="mt-5 w-full rounded-full"
-                  onClick={() => void markDelivered(item)}
+          {items.length === 0 ? (
+            <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-10 text-center text-muted-foreground">
+              Nenhum prato aguardando retirada.
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {items.map((item) => (
+                <article
+                  key={item.id}
+                  className="overflow-hidden rounded-3xl border border-emerald-300/20 bg-emerald-300/[0.06] p-5"
                 >
-                  Marcar como entregue
-                </Button>
-              </article>
-            ))}
-          </div>
-        )}
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-200">
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      Pronto
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(item.created_at).toLocaleTimeString("pt-BR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-5 font-display text-3xl leading-tight">
+                    {item.quantity}x {item.name}
+                  </h3>
+
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl bg-black/20 p-4">
+                      <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                        <MapPin className="h-3.5 w-3.5" /> Mesa
+                      </p>
+                      <p className="mt-1 text-2xl font-semibold">
+                        {item.orders?.table_number ?? "?"}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-black/20 p-4">
+                      <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                        <UserRound className="h-3.5 w-3.5" /> Pessoa
+                      </p>
+                      <p className="mt-1 truncate text-lg font-semibold">
+                        {item.customer_name || item.orders?.customer_name || "Mesa"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {item.notes && (
+                    <p className="mt-3 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-3 text-sm text-amber-100">
+                      Observação: {item.notes}
+                    </p>
+                  )}
+
+                  <Button
+                    className="mt-5 w-full rounded-full"
+                    onClick={() => void markDelivered(item)}
+                  >
+                    Marcar como entregue
+                  </Button>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </main>
   );
