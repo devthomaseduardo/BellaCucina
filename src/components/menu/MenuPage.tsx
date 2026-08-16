@@ -6,7 +6,6 @@ import { CartProvider } from "@/components/cart/CartContext";
 import FloatingActions from "@/components/layout/FloatingActions";
 import { StickySiteNav } from "@/components/layout/StickySiteNav";
 import Footer from "@/components/layout/Footer";
-import { Button } from "@/components/ui/button";
 
 const MenuPageContent = () => {
   return (
@@ -14,28 +13,25 @@ const MenuPageContent = () => {
       <StickySiteNav />
       <FloatingActions showWaiterAction={false} />
 
-      <main className="min-w-0 pt-20 md:pt-24">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Button
-            asChild
-            variant="outline"
-            className="mb-6 rounded-full border-white/10 bg-white/[0.045]"
+      <main className="min-w-0 pt-20 sm:pt-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <Link
+            to="/menu"
+            className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground transition hover:text-foreground"
           >
-            <Link to="/menu">
-              <ArrowLeft className="mr-2 h-4 w-4" aria-hidden />
-              Voltar para a experiência
-            </Link>
-          </Button>
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1" aria-hidden />
+            Voltar para a experiência
+          </Link>
         </div>
 
-        <section id="menu" className="scroll-mt-24">
+        <section id="menu" className="scroll-mt-20">
           <MenuSection />
         </section>
       </main>
 
       <Footer
         restaurantName="Bella Cucina"
-        address="Rua Principal, 123, Cidade, Estado 12345"
+        address="Jardins, São Paulo"
         phone="(11) 1234-5678"
         email="contato@bellacucina.com"
       />
@@ -43,12 +39,10 @@ const MenuPageContent = () => {
   );
 };
 
-const MenuPage = () => {
-  return (
-    <CartProvider>
-      <MenuPageContent />
-    </CartProvider>
-  );
-};
+const MenuPage = () => (
+  <CartProvider>
+    <MenuPageContent />
+  </CartProvider>
+);
 
 export default MenuPage;
