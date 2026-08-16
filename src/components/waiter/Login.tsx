@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ChefHat } from "lucide-react";
+import type { Session } from "@supabase/supabase-js";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,7 @@ interface LoginProps {
   description?: string;
 }
 
-const isStaffSession = (session: Awaited<ReturnType<typeof supabase.auth.getSession>>["data"]["session"]) => {
+const isStaffSession = (session: Session | null) => {
   if (!session) return false;
   return session.user?.is_anonymous !== true;
 };
