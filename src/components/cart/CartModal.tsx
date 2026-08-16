@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { CheckCircle2, Edit, Minus, Plus, ReceiptText, Trash2, User, X } from "lucide-react";
+
 import { useCart, type CartItem } from "./CartContext";
 import {
   Dialog,
@@ -11,10 +13,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle2, Edit, Minus, Plus, ReceiptText, Trash2, User, X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import { getMenuItemDetails } from "@/data/menu-item-details";
+import { getTableTokenFromUrl } from "@/lib/table-session";
 
 interface CartModalProps {
   open: boolean;
@@ -39,9 +41,12 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
     addOrder,
   } = useCart();
 
+  const tableToken = getTableTokenFromUrl();
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [itemNotes, setItemNotes] = useState("");
-  const [localTableNumber, setLocalTableNumber] = useState(tableNumber || "");
+  const [localTableNumber, setLocalTableNumber] = useState(
+    tableNumber || (tableToken ? "QR" : ""),
+  );
   const [localCustomerName, setLocalCustomerName] = useState(customerName || "");
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
@@ -67,7 +72,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
 
   const handleCheckout = async () => {
     if (isSubmitting) return;
-    if (!localTableNumber.trim()) {
+    if (!tableToken && !localTableNumber.trim()) {
       notify("Informe o número da sua mesa.");
       return;
     }
@@ -76,7 +81,9 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
       return;
     }
 
-    if (localTableNumber !== tableNumber) setTableNumber(localTableNumber);
+    if (!tableToken && localTableNumber !== tableNumber) {
+      setTableNumber(localTableNumber);
+    }
     if (localCustomerName !== customerName) setCustomerName(localCustomerName);
 
     const snapshot = items.map((item) => ({ ...item }));
@@ -85,7 +92,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
     setIsSubmitting(true);
     try {
       const orderId = await addOrder({
-        tableNumber: localTableNumber,
+        tableNumber: tableToken ? "QR" : localTableNumber,
         customerName: localCustomerName,
         items: snapshot,
         status: "pending",
@@ -134,7 +141,7 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
                       Pedido #{createdOrderId}
                     </div>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Mesa {localTableNumber} · {localCustomerName}
+                      {tableToken ? "Mesa identificada pelo QR" : `Mesa ${localTableNumber}`} · {localCustomerName}
                     </p>
                   </div>
                   <span className="rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-amber-100">
@@ -243,23 +250,39 @@ const CartModal: React.FC<CartModalProps> = ({ open, onOpenChange }) => {
               <>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div>
-                    <Label htmlFor="tableNumber">Número da mesa</Label>
-                    <Input
-                      id="tableNumber"
-                      value={localTableNumber}
-                      onChange={(event) => setLocalTableNumber(event.target.value)}
-                      placeholder="Ex.: 12"
-                      className="mt-1 rounded-full border-white/10 bg-white/[0.04]"
-                    />
+                    {tableToken ? (
+                      <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.06] p-3">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-200">
+                          Mesa validada
+                        </p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          Esta comanda está vinculada ao QR escaneado na mesa. Não é necessário digitar o número.
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <Label htmlFor="tableNumber">Número da mesa</Label>
+                        <Input
+                          id="tableNumber"
+                          value={localTableNumber}
+                          onChange={(event) => setLocalTableNumber(event.target.value)}
+                          placeholder="Ex.: 12"
+                          className="mt-1 rounded-full border-white/10 bg-white/[0.04]"
+                        />
+                        <p className="mt-1.5 text-[10px] leading-4 text-muted-foreground">
+                          Entrada manual para demonstração. No restaurante, a mesa vem do QR.
+                        </p>
+                      </>
+                    )}
                   </div>
                   <div>
-                    <Label htmlFor="customerName">Identificação</Label>
+                    <Label htmlFor="customerName">Seu nome</Label>
                     <div className="relative mt-1">
                       <Input
                         id="customerName"
                         value={localCustomerName}
                         onChange={(event) => setLocalCustomerName(event.target.value)}
-                        placeholder="Nome do grupo ou responsável"
+                        placeholder="Ex.: Thomas"
                         className="rounded-full border-white/10 bg-white/[0.04] pl-9"
                       />
                       <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" aria-hidden />
