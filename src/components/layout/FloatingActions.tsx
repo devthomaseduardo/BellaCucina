@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { ReceiptText } from "lucide-react";
+
+import AccountModal from "@/components/cart/AccountModal";
 import CartModal from "@/components/cart/CartModal";
 import { useCart } from "@/components/cart/CartContext";
 import WaiterButton from "@/components/waiter/WaiterButton";
@@ -21,6 +24,7 @@ const FloatingActions = ({
   showWaiterAction = false,
 }: FloatingActionsProps) => {
   const [cartOpen, setCartOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const { totalItems, totalPrice } = useCart();
   const itemLabel = totalItems === 1 ? "1 item" : `${totalItems} itens`;
 
@@ -33,6 +37,19 @@ const FloatingActions = ({
           className,
         )}
       >
+        <button
+          type="button"
+          onClick={() => setAccountOpen(true)}
+          className="group flex h-10 items-center gap-2 rounded-full border border-white/10 bg-black/[0.72] px-3.5 text-white shadow-xl backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-black/85"
+          aria-label="Abrir conta da mesa"
+        >
+          <ReceiptText className="h-4 w-4 text-primary" aria-hidden />
+          <span className="text-xs font-semibold">Minha conta</span>
+          <span className="hidden text-[9px] uppercase tracking-[0.14em] text-white/55 sm:inline">
+            ao vivo
+          </span>
+        </button>
+
         <button
           type="button"
           onClick={() => setCartOpen(true)}
@@ -83,6 +100,7 @@ const FloatingActions = ({
       </div>
 
       <CartModal open={cartOpen} onOpenChange={setCartOpen} />
+      <AccountModal open={accountOpen} onOpenChange={setAccountOpen} />
     </>
   );
 };
