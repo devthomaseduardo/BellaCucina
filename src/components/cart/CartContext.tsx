@@ -1,6 +1,17 @@
 import * as React from "react";
 import { createContext, useContext } from "react";
 import { supabase } from "@/lib/supabase";
+import {
+  ensureCustomerTableSession,
+  type CustomerTableSession,
+} from "@/lib/table-session";
+
+export type OrderStatus =
+  | "pending"
+  | "preparing"
+  | "ready"
+  | "delivered"
+  | "cancelled";
 
 export interface CartItem {
   id: string;
@@ -11,6 +22,8 @@ export interface CartItem {
   category: string;
   notes?: string;
   customerName?: string;
+  status?: OrderStatus;
+  guestId?: string | null;
 }
 
 export interface Order {
@@ -18,10 +31,12 @@ export interface Order {
   tableNumber: string;
   customerName: string;
   items: CartItem[];
-  status: "pending" | "preparing" | "ready" | "delivered" | "cancelled";
+  status: OrderStatus;
   totalPrice: number;
   createdAt: Date;
   updatedAt: Date;
+  sessionId?: string | null;
+  guestId?: string | null;
 }
 
 interface CartContextType {
@@ -42,6 +57,7 @@ interface CartContextType {
   setTableNumber: (tableNumber: string) => void;
   customerName: string | null;
   setCustomerName: (name: string) => void;
+  currentTableSession: CustomerTableSession | null;
   showSuccessToast: boolean;
   setShowSuccessToast: (show: boolean) => void;
   successMessage: string;
@@ -62,10 +78,8 @@ export const useCart = () => {
   return context;
 };
 
-// Generate a random ID for orders
-const generateOrderId = () => {
-  return Math.floor(1000 + Math.random() * 9000).toString();
-};
+const generateOrderId = () =>
+  Math.floor(1000 + Math.random() * 9000).toString();
 
 const hasSupabaseConfig = Boolean(
   import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY,
@@ -97,9 +111,7 @@ const readStoredOrders = () => {
 
   try {
     return JSON.parse(savedOrders, (key, value) => {
-      if (key === "createdAt" || key === "updatedAt") {
-        return new Date(value);
-      }
+      if (key === "createdAt" || key === "updatedAt") return new Date(value);
       return value;
     }) as Order[];
   } catch (error) {
@@ -108,9 +120,7 @@ const readStoredOrders = () => {
   }
 };
 
-export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = React.useState<CartItem[]>(readStoredCart);
   const [tableNumber, setTableNumber] = React.useState<string | null>(() =>
     readLocalStorage("tableNumber"),
@@ -118,32 +128,26 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   const [customerName, setCustomerName] = React.useState<string | null>(() =>
     readLocalStorage("customerName"),
   );
-  const [showSuccessToast, setShowSuccessToast] = React.useState<boolean>(false);
-  const [successMessage, setSuccessMessage] = React.useState<string>("");
+  const [currentTableSession, setCurrentTableSession] =
+    React.useState<CustomerTableSession | null>(null);
+  const [showSuccessToast, setShowSuccessToast] = React.useState(false);
+  const [successMessage, setSuccessMessage] = React.useState("");
   const [orders, setOrders] = React.useState<Order[]>(readStoredOrders);
 
-  // Save cart to localStorage whenever it changes
   React.useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(items));
   }, [items]);
 
-  // Save orders to localStorage whenever they change
   React.useEffect(() => {
     localStorage.setItem("orders", JSON.stringify(orders));
   }, [orders]);
 
-  // Save table number to localStorage whenever it changes
   React.useEffect(() => {
-    if (tableNumber) {
-      localStorage.setItem("tableNumber", tableNumber);
-    }
+    if (tableNumber) localStorage.setItem("tableNumber", tableNumber);
   }, [tableNumber]);
 
-  // Save customer name to localStorage whenever it changes
   React.useEffect(() => {
-    if (customerName) {
-      localStorage.setItem("customerName", customerName);
-    }
+    if (customerName) localStorage.setItem("customerName", customerName);
   }, [customerName]);
 
   const addItem = (
@@ -153,38 +157,40 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     itemCustomerName = "",
   ) => {
     setItems((prevItems) => {
-      // Only merge if ID AND customerName are the same
+      const resolvedCustomer = itemCustomerName || customerName || "";
       const existingItemIndex = prevItems.findIndex(
-        (i) => i.id === item.id && (i.customerName || "") === (itemCustomerName || ""),
+        (current) =>
+          current.id === item.id &&
+          (current.customerName || "") === resolvedCustomer,
       );
 
       if (existingItemIndex >= 0) {
-        // Item already exists, update quantity
         const updatedItems = [...prevItems];
         updatedItems[existingItemIndex] = {
           ...updatedItems[existingItemIndex],
           quantity: updatedItems[existingItemIndex].quantity + quantity,
           notes: notes || updatedItems[existingItemIndex].notes,
         };
-        setSuccessMessage(`${item.name} atualizado no carrinho!`);
+        setSuccessMessage(`${item.name} atualizado no pedido`);
         setShowSuccessToast(true);
         setTimeout(() => setShowSuccessToast(false), 3000);
         return updatedItems;
-      } else {
-        // Add new item
-        setSuccessMessage(`${item.name} adicionado ao carrinho!`);
-        setShowSuccessToast(true);
-        setTimeout(() => setShowSuccessToast(false), 3000);
-        return [
-          ...prevItems,
-          {
-            ...item,
-            quantity,
-            notes,
-            customerName: itemCustomerName || customerName || undefined,
-          },
-        ];
       }
+
+      setSuccessMessage(`${item.name} adicionado ao pedido`);
+      setShowSuccessToast(true);
+      setTimeout(() => setShowSuccessToast(false), 3000);
+
+      return [
+        ...prevItems,
+        {
+          ...item,
+          quantity,
+          notes,
+          customerName: resolvedCustomer || undefined,
+          status: "pending",
+        },
+      ];
     });
   };
 
@@ -192,7 +198,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     const itemToRemove = items.find((item) => item.id === id);
     setItems((prevItems) => prevItems.filter((item) => item.id !== id));
     if (itemToRemove) {
-      setSuccessMessage(`${itemToRemove.name} removido do carrinho`);
+      setSuccessMessage(`${itemToRemove.name} removido do pedido`);
       setShowSuccessToast(true);
       setTimeout(() => setShowSuccessToast(false), 3000);
     }
@@ -203,7 +209,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
       removeItem(id);
       return;
     }
-
     setItems((prevItems) =>
       prevItems.map((item) => (item.id === id ? { ...item, quantity } : item)),
     );
@@ -220,7 +225,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const clearCart = () => {
     setItems([]);
-    setSuccessMessage("Carrinho esvaziado");
+    setSuccessMessage("Pedido atual limpo");
     setShowSuccessToast(true);
     setTimeout(() => setShowSuccessToast(false), 3000);
   };
@@ -240,28 +245,34 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
       return fallbackOrder.id;
     };
 
-    if (!hasSupabaseConfig) {
-      return createLocalOrder();
-    }
+    if (!hasSupabaseConfig) return createLocalOrder();
 
     try {
+      const tableSession = await ensureCustomerTableSession(
+        orderData.tableNumber,
+        orderData.customerName,
+      );
+
+      if (!tableSession) return createLocalOrder();
+      setCurrentTableSession(tableSession);
+
       const { data: orderResult, error: orderError } = await supabase
-        .from('orders')
+        .from("orders")
         .insert({
-          table_number: orderData.tableNumber,
+          table_number: tableSession.tableNumber,
           customer_name: orderData.customerName,
           status: orderData.status,
-          total_price: orderData.totalPrice
+          total_price: orderData.totalPrice,
+          session_id: tableSession.sessionId,
+          guest_id: tableSession.guestId,
         })
         .select()
         .single();
-      
+
       if (orderError) throw orderError;
-      
+
       const orderId = orderResult.id;
-      
-      // Insert items
-      const itemsToInsert = orderData.items.map(item => ({
+      const itemsToInsert = orderData.items.map((item) => ({
         order_id: orderId,
         menu_item_id: isUuid(item.id) ? item.id : null,
         name: item.name,
@@ -270,19 +281,29 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         image_url: item.image,
         category: item.category,
         notes: item.notes,
-        customer_name: item.customerName
+        customer_name: item.customerName || orderData.customerName,
+        session_id: tableSession.sessionId,
+        guest_id: tableSession.guestId,
+        status: "pending",
       }));
-      
+
       const { error: itemsError } = await supabase
-        .from('order_items')
+        .from("order_items")
         .insert(itemsToInsert);
-        
-      if (itemsError) console.error("Error inserting items:", itemsError);
+
+      if (itemsError) throw itemsError;
 
       const now = new Date();
       const newOrder: Order = {
         ...orderData,
         id: orderId,
+        sessionId: tableSession.sessionId,
+        guestId: tableSession.guestId,
+        items: orderData.items.map((item) => ({
+          ...item,
+          status: "pending",
+          guestId: tableSession.guestId,
+        })),
         createdAt: now,
         updatedAt: now,
       };
@@ -291,15 +312,20 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
       return orderId;
     } catch (error) {
       console.error("Failed to add order", error);
+      setSuccessMessage(
+        "Não foi possível sincronizar o pedido. Verifique a configuração do Supabase.",
+      );
+      setShowSuccessToast(true);
+      setTimeout(() => setShowSuccessToast(false), 4000);
       return createLocalOrder();
     }
   };
 
   const importOrder = (order: Order) => {
     setOrders((prevOrders) => {
-      if (prevOrders.some((o) => o.id === order.id)) {
-        return prevOrders.map((existing) =>
-          existing.id === order.id ? order : existing,
+      if (prevOrders.some((current) => current.id === order.id)) {
+        return prevOrders.map((current) =>
+          current.id === order.id ? order : current,
         );
       }
       return [...prevOrders, order];
@@ -308,36 +334,33 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const updateOrderStatus = async (orderId: string, status: Order["status"]) => {
     const updatedAt = new Date();
-
     setOrders((prevOrders) =>
       prevOrders.map((order) =>
-        order.id === orderId
-          ? { ...order, status, updatedAt }
-          : order,
+        order.id === orderId ? { ...order, status, updatedAt } : order,
       ),
     );
 
-    if (!hasSupabaseConfig) {
-      return;
-    }
+    if (!hasSupabaseConfig) return;
 
     try {
       await supabase
-        .from('orders')
+        .from("orders")
         .update({ status, updated_at: updatedAt.toISOString() })
-        .eq('id', orderId);
-    } catch (e) {
-      console.error("Failed to update status", e);
+        .eq("id", orderId);
+    } catch (error) {
+      console.error("Failed to update status", error);
     }
   };
 
-  const totalItems = React.useMemo(() => 
-    items.reduce((total, item) => total + item.quantity, 0),
-  [items]);
+  const totalItems = React.useMemo(
+    () => items.reduce((total, item) => total + item.quantity, 0),
+    [items],
+  );
 
-  const totalPrice = React.useMemo(() => 
-    items.reduce((total, item) => total + item.price * item.quantity, 0),
-  [items]);
+  const totalPrice = React.useMemo(
+    () => items.reduce((total, item) => total + item.price * item.quantity, 0),
+    [items],
+  );
 
   const value: CartContextType = {
     items,
@@ -352,6 +375,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     setTableNumber,
     customerName,
     setCustomerName,
+    currentTableSession,
     showSuccessToast,
     setShowSuccessToast,
     successMessage,
