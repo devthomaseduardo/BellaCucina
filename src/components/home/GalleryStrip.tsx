@@ -11,22 +11,22 @@ import {
 
 const GALLERY_SRC: { src: string; captionKey: string; tone: string }[] = [
   {
-    src: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80",
+    src: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1000&q=82",
     captionKey: "1",
     tone: "Sala",
   },
   {
-    src: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80",
+    src: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1000&q=82",
     captionKey: "2",
     tone: "Cozinha",
   },
   {
-    src: "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800&q=80",
+    src: "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=1000&q=82",
     captionKey: "3",
     tone: "Massa",
   },
   {
-    src: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80",
+    src: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1000&q=82",
     captionKey: "4",
     tone: "Forno",
   },
@@ -36,28 +36,16 @@ const GALLERY_SRC: { src: string; captionKey: string; tone: string }[] = [
     tone: "Brasa",
   },
   {
-    src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
+    src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1000&q=82",
     captionKey: "6",
     tone: "Reserva",
   },
 ];
 
 const storyBeats = [
-  {
-    code: "01",
-    title: "Chegada",
-    body: "Luz baixa, mesa pronta e atendimento sem pressa.",
-  },
-  {
-    code: "02",
-    title: "Pass",
-    body: "Massa fresca, forno aceso e pratos finalizados à vista.",
-  },
-  {
-    code: "03",
-    title: "Mesa",
-    body: "Carta curta, vinho certo e pedido direto pelo celular.",
-  },
+  { code: "01", title: "Chegada", body: "Mesa pronta, luz baixa e recepção sem pressa." },
+  { code: "02", title: "Cozinha", body: "Massa fresca, forno aceso e finalização à vista." },
+  { code: "03", title: "Mesa", body: "Pedido pelo celular sem interromper a experiência." },
 ];
 
 const GalleryStrip = () => {
@@ -75,155 +63,125 @@ const GalleryStrip = () => {
   );
 
   return (
-    <section id="featured" className="relative w-full scroll-mt-24 overflow-hidden bg-background py-12 md:py-20">
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+    <section id="featured" className="relative w-full scroll-mt-20 overflow-hidden bg-background py-14 sm:py-16 md:py-24">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={shouldReduceMotion ? false : { opacity: 1, y: 24 }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 22 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-8 grid gap-5 lg:grid-cols-[0.82fr_1fr] lg:items-end"
+          viewport={{ once: true, margin: "-70px" }}
+          transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-8 grid gap-5 md:mb-10 lg:grid-cols-[0.8fr_1fr] lg:items-end"
         >
           <div>
-            <p className="text-[11px] uppercase tracking-[0.28em] text-[hsl(var(--accent))]">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-primary sm:text-[11px]">
               {t("gallery.kicker")}
             </p>
-            <h2 className="mt-3 max-w-xl font-display text-3xl text-foreground sm:text-4xl md:text-5xl">
-              Noite na Bella
+            <h2 className="mt-3 max-w-[10ch] font-display text-4xl leading-[0.98] text-foreground sm:text-5xl md:text-6xl">
+              Uma noite na Bella.
             </h2>
           </div>
 
-          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base lg:justify-self-end">
-            Salão, cozinha aberta e mesa seguem a mesma cadência: receber bem,
-            cozinhar com precisão e deixar o pedido fluir sem interromper a noite.
+          <p className="max-w-xl text-sm leading-7 text-muted-foreground sm:text-base lg:justify-self-end">
+            Sala, cozinha e atendimento foram pensados como uma única experiência. O digital entra para reduzir espera, não para competir com a mesa.
           </p>
         </motion.div>
 
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)]">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1.45fr)_minmax(18rem,0.55fr)] lg:gap-6">
           <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 1, scale: 0.98 }}
-            whileInView={shouldReduceMotion ? undefined : { opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.04]"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-70px" }}
+            transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
+            className="relative min-w-0 overflow-hidden bg-black"
           >
-            <Carousel
-              opts={{ align: "start", loop: true }}
-              className="h-full"
-              aria-label="Cenas da experiência Bella Cucina"
-            >
-              <CarouselContent className="h-full">
-                {items.slice(0, 4).map((item) => (
+            <Carousel opts={{ align: "start", loop: true }} aria-label="Cenas da experiência Bella Cucina">
+              <CarouselContent>
+                {items.slice(0, 5).map((item, index) => (
                   <CarouselItem key={item.src}>
-                    <figure className="relative aspect-[16/12] min-h-[22rem] overflow-hidden sm:aspect-[16/10] lg:aspect-auto lg:h-[34rem]">
+                    <figure className="relative h-[28rem] overflow-hidden sm:h-[34rem] lg:h-[42rem]">
                       <img
                         src={item.src}
                         alt={item.alt}
-                        loading="lazy"
-                        className="h-full w-full object-cover transition duration-700 hover:scale-[1.04]"
+                        loading={index === 0 ? "eager" : "lazy"}
+                        className="h-full w-full object-cover transition duration-1000 ease-out hover:scale-[1.025]"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/86 via-black/22 to-transparent" />
-                      <figcaption className="absolute bottom-0 left-0 right-0 p-5 sm:p-7">
-                        <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--accent))]">
-                          {item.tone}
-                        </span>
-                        <p className="mt-3 max-w-[18rem] break-words font-display text-2xl leading-tight text-white sm:max-w-xl sm:text-4xl">
-                          {item.alt}
-                        </p>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/88 via-black/12 to-black/10" />
+                      <figcaption className="absolute inset-x-0 bottom-0 p-5 sm:p-7 md:p-9">
+                        <div className="flex items-end justify-between gap-4">
+                          <div>
+                            <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">
+                              {String(index + 1).padStart(2, "0")} · {item.tone}
+                            </span>
+                            <p className="mt-2 max-w-xl font-display text-3xl leading-tight text-white sm:text-4xl md:text-5xl">
+                              {item.alt}
+                            </p>
+                          </div>
+                          <span className="hidden shrink-0 text-xs uppercase tracking-[0.2em] text-white/45 sm:block">
+                            Bella Cucina
+                          </span>
+                        </div>
                       </figcaption>
                     </figure>
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-4 top-5 h-10 w-10 translate-y-0 border-white/15 bg-black/35 text-white backdrop-blur hover:bg-black/55" />
-              <CarouselNext className="left-16 right-auto top-5 h-10 w-10 translate-y-0 border-white/15 bg-black/35 text-white backdrop-blur hover:bg-black/55" />
+
+              <div className="absolute right-4 top-4 z-10 flex gap-2 sm:right-6 sm:top-6">
+                <CarouselPrevious className="static h-10 w-10 translate-y-0 border-0 bg-black/55 text-white backdrop-blur-md hover:bg-black/75 hover:text-white" />
+                <CarouselNext className="static h-10 w-10 translate-y-0 border-0 bg-black/55 text-white backdrop-blur-md hover:bg-black/75 hover:text-white" />
+              </div>
             </Carousel>
           </motion.div>
 
           <motion.aside
-            initial={shouldReduceMotion ? false : { opacity: 1, y: 18 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
             whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1] }}
-            className="grid gap-4"
+            viewport={{ once: true, margin: "-70px" }}
+            transition={{ duration: 0.58, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col justify-between bg-muted/20 p-5 sm:p-6 lg:p-7"
           >
-            <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.045] p-5 sm:p-6">
-              <p className="text-[11px] uppercase tracking-[0.28em] text-[hsl(var(--accent))]">
-                Ritual da noite
-              </p>
-              <p className="mt-4 pr-14 font-display text-2xl leading-tight text-foreground sm:pr-0 sm:text-3xl">
-                A experiência começa antes do prato principal.
-              </p>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">Ritual da noite</p>
+              <h3 className="mt-3 max-w-[12ch] font-display text-3xl leading-tight text-foreground">
+                O serviço acompanha o ritmo da mesa.
+              </h3>
 
-              <div className="mt-6 grid gap-0 border-t border-white/10">
+              <div className="mt-7 divide-y divide-white/10 border-y border-white/10">
                 {storyBeats.map((beat) => (
-                  <div
-                    key={beat.code}
-                    className="grid grid-cols-[3.25rem_1fr] gap-4 border-b border-white/10 py-4 pr-16 last:border-b-0 sm:pr-0"
-                  >
-                    <span className="font-display text-2xl text-primary">{beat.code}</span>
+                  <div key={beat.code} className="grid grid-cols-[2.5rem_1fr] gap-4 py-5">
+                    <span className="font-display text-xl text-primary">{beat.code}</span>
                     <div>
                       <p className="text-sm font-semibold text-foreground">{beat.title}</p>
-                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                        {beat.body}
-                      </p>
+                      <p className="mt-1 text-sm leading-6 text-muted-foreground">{beat.body}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <figure className="relative min-h-[12rem] overflow-hidden rounded-2xl">
-              <img
-                src={items[5]?.src}
-                alt={items[5]?.alt}
-                loading="lazy"
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/12 to-transparent" />
-              <figcaption className="absolute bottom-0 left-0 right-0 p-4">
-                <span className="text-[10px] uppercase tracking-[0.22em] text-white/55">
-                  Reserva
-                </span>
-                <p className="mt-1 text-sm font-semibold leading-snug text-white">
-                  Serviço pensado para a noite acontecer sem ruído.
+            <figure className="relative mt-6 min-h-[14rem] overflow-hidden lg:min-h-[16rem]">
+              <img src={items[5]?.src} alt={items[5]?.alt} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/88 via-black/12 to-transparent" />
+              <figcaption className="absolute inset-x-0 bottom-0 p-5">
+                <span className="text-[10px] uppercase tracking-[0.22em] text-primary">Reserva</span>
+                <p className="mt-2 max-w-[20rem] font-display text-2xl leading-tight text-white">
+                  Planeje a noite em poucos passos.
                 </p>
               </figcaption>
             </figure>
           </motion.aside>
         </div>
 
-        <div className="mt-4 hidden grid-cols-2 gap-4 sm:grid lg:grid-cols-4">
-          {items.slice(1, 5).map((it, idx) => (
-            <motion.figure
-              key={`${it.src}-${idx}`}
-              initial={shouldReduceMotion ? false : { opacity: 1, y: 18 }}
-              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{
-                delay: shouldReduceMotion ? 0 : idx * 0.04,
-                duration: 0.52,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="group relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] lg:aspect-[5/4]"
-            >
-              <img
-                src={it.src}
-                alt={it.alt}
-                loading="lazy"
-                className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.06]"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-black/10 to-transparent" />
-              <figcaption className="absolute bottom-0 left-0 right-0 p-4">
-                <span className="text-[10px] uppercase tracking-[0.2em] text-[hsl(var(--accent))]">
-                  {it.tone}
-                </span>
-                <p className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-white">
-                  {it.alt}
-                </p>
+        <div className="mt-5 flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:grid sm:grid-cols-4 sm:gap-4 sm:overflow-visible">
+          {items.slice(1, 5).map((item, index) => (
+            <figure key={`${item.src}-${index}`} className="group relative aspect-[4/3] w-[72vw] max-w-[19rem] shrink-0 overflow-hidden sm:w-auto sm:max-w-none">
+              <img src={item.src} alt={item.alt} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/76 via-transparent to-transparent" />
+              <figcaption className="absolute inset-x-0 bottom-0 p-4">
+                <span className="text-[9px] uppercase tracking-[0.22em] text-primary">{item.tone}</span>
+                <p className="mt-1 line-clamp-1 text-sm font-medium text-white">{item.alt}</p>
               </figcaption>
-            </motion.figure>
+            </figure>
           ))}
         </div>
       </div>
