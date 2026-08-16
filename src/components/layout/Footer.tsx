@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
 
 interface FooterProps {
   restaurantName?: string;
@@ -10,142 +11,74 @@ interface FooterProps {
 
 const Footer = ({
   restaurantName = "Bella Cucina",
-  address = "123 Main Street, City, State 12345",
-  phone = "(555) 123-4567",
-  email = "info@restaurant.com",
+  address = "Jardins, São Paulo",
+  phone = "(11) 1234-5678",
+  email = "contato@bellacucina.com",
 }: FooterProps) => {
   return (
-    <footer className="w-full border-t border-white/10 bg-black px-4 py-12 text-white md:px-8 md:py-16">
-      <div className="container mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+    <footer className="w-full bg-[#080706] px-4 pb-8 pt-14 text-white sm:px-6 sm:pt-16 md:px-8 md:pt-20">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-10 border-b border-white/10 pb-12 lg:grid-cols-[1.25fr_0.75fr] lg:items-end">
           <div>
-            <h3 className="mb-4 font-display text-3xl text-zinc-50">{restaurantName}</h3>
-            <p className="max-w-xs text-sm leading-relaxed text-zinc-400">
-              Cardápio digital, reservas e pedidos por QR para uma experiência italiana moderna.
+            <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-primary">Bella Cucina</p>
+            <h2 className="mt-4 max-w-[12ch] font-display text-4xl leading-[0.96] text-white sm:text-5xl md:text-6xl">
+              Uma mesa, uma noite, menos ruído.
+            </h2>
+            <p className="mt-5 max-w-xl text-sm leading-7 text-white/55 sm:text-base">
+              Cardápio digital, reservas e atendimento pensados para deixar a tecnologia no lugar certo: apoiando a experiência.
             </p>
-            <div className="mt-5 space-y-2 text-sm text-zinc-400">
-              <p className="flex items-center gap-2">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">Rua</span>
-                {address}
-              </p>
-              <p className="flex items-center gap-2">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">Tel</span>
-                {phone}
-              </p>
-              <p className="flex items-center gap-2">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">Mail</span>
-                {email}
-              </p>
-            </div>
           </div>
 
-          <div>
-            <h3 className="mb-4 text-lg font-semibold text-zinc-50">Horários</h3>
-            <p className="mb-2 text-zinc-400">
-              Segunda a quinta: 11:00 às 22:00
-            </p>
-            <p className="mb-2 text-zinc-400">
-              Sexta e sábado: 11:00 às 23:00
-            </p>
-            <p className="text-zinc-400">Domingo: 12:00 às 21:00</p>
-          </div>
-
-          <div>
-            <h3 className="mb-4 text-lg font-semibold text-zinc-50">Navegação</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  to="/menu"
-                  className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-                >
-                  Início
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/cardapio"
-                  className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-                >
-                  Cardápio
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/menu#reservations"
-                  className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-                >
-                  Reservas
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/menu#about"
-                  className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-                >
-                  Sobre
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/menu#contact"
-                  className="text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-                >
-                  Contato
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="mb-4 text-lg font-semibold text-zinc-50">Acompanhe</h3>
-            <div className="flex space-x-4">
-              <a
-                href="#"
-                aria-label="Facebook"
-                className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-              >
-                FB
-              </a>
-              <a
-                href="#"
-                aria-label="Instagram"
-                className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-              >
-                IG
-              </a>
-              <a
-                href="#"
-                aria-label="Twitter"
-                className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-              >
-                X
-              </a>
-            </div>
-            <div className="mt-6">
-              <h4 className="mb-2 text-lg font-semibold">
-                Receba novidades
-              </h4>
-              <div className="flex">
-                <input
-                  type="email"
-                  placeholder="Seu e-mail"
-                  className="min-w-0 flex-1 rounded-l-full border border-white/10 bg-white/[0.05] px-4 py-2 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
-                <button
-                  type="button"
-                  className="rounded-r-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-                >
-                  Enviar
-                </button>
-              </div>
-            </div>
+          <div className="lg:justify-self-end">
+            <Link
+              to="/menu#reservations"
+              className="group inline-flex items-center gap-2 text-sm font-semibold text-white transition hover:text-primary"
+            >
+              Reservar uma mesa
+              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" aria-hidden />
+            </Link>
           </div>
         </div>
 
-        <div className="mt-12 border-t border-white/10 pt-8 text-center text-zinc-500">
-          <p>
-            &copy; {new Date().getFullYear()} {restaurantName}. Todos os direitos reservados.
-          </p>
+        <div className="grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Local</p>
+            <p className="mt-3 max-w-xs text-sm leading-6 text-white/65">{address}</p>
+          </div>
+
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Contato</p>
+            <a href={`tel:${phone.replace(/\D/g, "")}`} className="mt-3 block text-sm text-white/65 transition hover:text-white">
+              {phone}
+            </a>
+            <a href={`mailto:${email}`} className="mt-1 block break-all text-sm text-white/65 transition hover:text-white">
+              {email}
+            </a>
+          </div>
+
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Horários</p>
+            <div className="mt-3 space-y-1 text-sm leading-6 text-white/65">
+              <p>Segunda a quinta, 11h às 22h</p>
+              <p>Sexta e sábado, 11h às 23h</p>
+              <p>Domingo, 12h às 21h</p>
+            </div>
+          </div>
+
+          <nav aria-label="Navegação do rodapé">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/35">Navegação</p>
+            <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-1">
+              <Link to="/menu" className="text-white/65 transition hover:text-white">Início</Link>
+              <Link to="/cardapio" className="text-white/65 transition hover:text-white">Cardápio</Link>
+              <Link to="/menu#reservations" className="text-white/65 transition hover:text-white">Reservas</Link>
+              <Link to="/menu#about" className="text-white/65 transition hover:text-white">Sobre</Link>
+            </div>
+          </nav>
+        </div>
+
+        <div className="flex flex-col gap-2 border-t border-white/10 pt-6 text-[10px] uppercase tracking-[0.16em] text-white/35 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} {restaurantName}</p>
+          <p>Experiência digital para restaurante</p>
         </div>
       </div>
     </footer>
